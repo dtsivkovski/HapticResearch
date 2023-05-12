@@ -1,9 +1,9 @@
 The web app is utilizing Chrome's Bluetooth Low Energy functionality. This should work with the Chrome browser on all devices except IOS.
 https://developer.chrome.com/articles/bluetooth/ 
 
-![alt text](https://github.com/awells-45/HapticResearch/blob/main/Web%20App/Webpage.png)
+![alt text](/Webpage.png)
 
-![alt text](https://github.com/awells-45/HapticResearch/blob/main/Web%20App/LED%20Array.jpeg)
+![alt text](/LED%20Array.jpeg)
 
 5/12/2023:
 This web app currently does not fully work; there is some sort-of bug related to data transmission. I am working on fixing this.
