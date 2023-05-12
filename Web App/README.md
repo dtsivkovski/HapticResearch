@@ -1,6 +1,8 @@
 The web app is utilizing Chrome's Bluetooth Low Energy functionality. This should work with the Chrome browser on all devices except IOS.
 https://developer.chrome.com/articles/bluetooth/ 
 
+This web app requires different Arduino code than the standard app
+
 ![Webpage](./Webpage.png)
 
 ![LED Array](./LED%20Array.jpeg)
