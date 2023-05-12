@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+    .buttons-group button {
+        background-color: #EEEEEE;
+        border: 1px solid black;
+        padding: 10px 24px;
+        cursor: pointer;
+        float: left;
+    }
+
+    .buttons-group button:hover {
+        background-color: #DDDDDD;
+    }
+</style>
+
+<head>
+    <title>Haptics Web Demo</title>
+    <link rel="icon" type="image/x-icon" href="Images/favicon.ico">
+</head>
+
+<body>
+    <h1 style="font-family: Arial, Helvetica, sans-serif">Haptics Web App Demo</h1>
+
+    <p id="status" style="font-family: Arial, Helvetica, sans-serif">Connection Unknown</p>
+    <p id="currValue" style="font-family: Arial, Helvetica, sans-serif">Value Unknown</p>
+
+    <script>
+        var connectedStatus = 0;
+        var currValue = "???";
+
+        function setConnectedStatus() {
+            document.getElementById("status").textContent = "Connected";
+            document.getElementById("status").style.color = "green";  
+            connectedStatus = 1;   
+        }
+
+        function setDisconnectedStatus() {
+            document.getElementById("status").textContent = "Disconnected";
+            document.getElementById("status").style.color = "red";  
+            connectedStatus = 0;   
+        }
+
+        function setCurrValue()
+        {
+            document.getElementById("currValue").textContent = currValue;
+        }
+
+        class HapticDevice {
+
+            constructor() {
+                this.device = null;
+                this.onDisconnected = this.onDisconnected.bind(this);
+            }
+
+            request() {
+                let options = {
+                    "filters": [{
+                    "name": "HapticDevice",
+                    "services": ["3f5d0625-d940-45fe-ba68-20fac82cb81f"]
+                    }]
+                };
+                return navigator.bluetooth.requestDevice(options)
+                .then(device => {
+                    this.device = device;
+                    this.device.addEventListener('gattserverdisconnected', this.onDisconnected);
+                });
+            }
+
+            connect() {
+                if (!this.device) {
+                    setDisconnectedStatus();
+                    return Promise.reject('Device is not connected.');
+                }
+                setConnectedStatus();
+                return this.device.gatt.connect();
+            }
+
+            readDisplayGrid() {
+                return this.device.gatt.getPrimaryService("3f5d0625-d940-45fe-ba68-20fac82cb81f")
+                .then(service => service.getCharacteristic("a8bf6ddf-1c87-40e7-9195-d7b9871feb7f"))
+                .then(characteristic => characteristic.readValue());
+            }
+
+            writeDisplayGrid(data) {
+                return this.device.gatt.getPrimaryService("3f5d0625-d940-45fe-ba68-20fac82cb81f")
+                .then(service => service.getCharacteristic("a8bf6ddf-1c87-40e7-9195-d7b9871feb7f"))
+                .then(characteristic => characteristic.writeValue(data));
+            }
+
+            startDisplayGridNotifications(listener) {
+                return this.device.gatt.getPrimaryService("3f5d0625-d940-45fe-ba68-20fac82cb81f")
+                .then(service => service.getCharacteristic("a8bf6ddf-1c87-40e7-9195-d7b9871feb7f"))
+                .then(characteristic => characteristic.startNotifications())
+                .then(characteristic => characteristic.addEventListener('characteristicvaluechanged', listener));
+            }
+
+            stopDisplayGridNotifications(listener) {
+                return this.device.gatt.getPrimaryService("3f5d0625-d940-45fe-ba68-20fac82cb81f")
+                .then(service => service.getCharacteristic("a8bf6ddf-1c87-40e7-9195-d7b9871feb7f"))
+                .then(characteristic => characteristic.stopNotifications())
+                .then(characteristic => characteristic.removeEventListener('characteristicvaluechanged', listener));
+            }
+
+            disconnect() {
+                if (!this.device) {
+                    return Promise.reject('Device is not connected.');
+                }
+                return this.device.gatt.disconnect();
+            }
+
+            onDisconnected() {
+                console.log('Device is disconnected.');
+                setDisconnectedStatus();
+            }
+        }
+
+        var hapticDevice = new HapticDevice();
+        var gridArrayData = "000000000000000000000000000000000000";
+
+        function connectToDevice()
+        {
+            hapticDevice.request()
+            .then(_ => hapticDevice.connect())
+            .catch(error => { console.log(error) });
+        }
+
+        function sendDisplayData()
+        {
+            if (connectedStatus != 1)
+            {
+                connectToDevice();
+            }
+            hapticDevice.sendDisplayData(gridArrayData);
+        }
+
+        function sendCircle()
+        {
+            gridArrayData = "001100010010100001100001010010001100";
+            sendDisplayData();
+        }
+
+        function updateCurrValue()
+        {
+            if(connectedStatus == 1)
+            {
+                currValue = readDisplayGrid();
+            }
+            else
+            {
+                currValue = "?????";
+            }
+            setCurrValue();
+        }
+
+        var valueInterval = window.setInterval(valueCallback, 500);
+
+        function valueCallback() {
+            updateCurrValue();
+        }
+
+    </script>
+
+    <div class="buttons-group"  style="width:100%">
+        <button type="button" onclick="sendCircle()"  style="width:50%">
+            <img src="Images/Circle.png" alt="circle"/>
+        </button>
+        
+        <button type="button" onclick="sendCircle()"  style="width:50%">
+            <img src="Images/Heart.png" alt="circle" />
+        </button>
+        
+        <button type="button" onclick="sendCircle()"  style="width:50%">
+            <img src="Images/Triangle.png" alt="circle" />
+        </button>
+        
+        <button type="button" onclick="sendCircle()"  style="width:50%">
+            <img src="Images/Square.png" alt="circle" />
+        </button>
+        
+        <button type="button" onclick="sendCircle()"  style="width:50%">
+            <img src="Images/X.png" alt="circle" />
+        </button>
+        
+        <button type="button" onclick="sendCircle()"  style="width:50%">
+            <img src="Images/PlusCross.png" alt="circle" />
+        </button>
+    </div>
+</body>
+
+</html>
