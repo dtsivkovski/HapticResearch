@@ -117,7 +117,7 @@
         }
 
         var hapticDevice = new HapticDevice();
-        var gridArrayData = "000000000000000000000000000000000000";
+        var gridArrayData = "000000000";
 
         function connectToDevice()
         {
@@ -137,7 +137,7 @@
 
         function sendCircle()
         {
-            gridArrayData = "001100010010100001100001010010001100";
+            gridArrayData = "31286148C";
             sendDisplayData();
         }
 
@@ -149,7 +149,7 @@
             }
             else
             {
-                currValue = "?????";
+                currValue = "Unknown Value";
             }
             setCurrValue();
         }
