@@ -35,18 +35,127 @@ void initArrays(){
 
 void copySerialToMatrix()
 {
-  for (int i = 0; i <= 30; i = i + 6)
+  // unpack serial data to temp serial array
+  uint8_t tempSerialArray[36];
+  for (int i = 0; i < 9; i = i + 1)
   {
-    for (int x = 0; x < 6; ++x) 
+    int currBottomIndex = i * 4;
+    char currSerialChar = pCharacteristic->getValue()[i]; // using a character 0-F for hexadecimal
+
+    switch(currSerialChar)
     {
-      int y = i / 6;
-      char tempValue = pCharacteristic->getValue()[i + x];
-      if (tempValue == '1')
-      {
-        hapticsArray[x][y] = 255;
-      } else {
-        hapticsArray[x][y] = 0;
-      }
+      case('0'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('1'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+      case('2'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('3'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+      case('4'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('5'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+      case('6'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('7'):
+        tempSerialArray[currBottomIndex] = 0;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+      case('8'):
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('9'):
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+      case('a'):
+      case('A'):
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('b'):
+      case('B'):
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 0;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+      case('c'):
+      case('C'):
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('d'):
+      case('D'):
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 0;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+      case('e'):
+      case('E'):
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 0;
+        break;
+      case('f'):
+      case('F'):
+      default:
+        tempSerialArray[currBottomIndex] = 255;
+        tempSerialArray[currBottomIndex + 1] = 255;
+        tempSerialArray[currBottomIndex + 2] = 255;
+        tempSerialArray[currBottomIndex + 3] = 255;
+        break;
+    }
+  }
+
+  // copy values from temp serial array
+  for (int x = 0; x < 6; ++x)
+  {
+    for (int y = 0; y < 6; ++y)
+    {
+      hapticsArray[x][y] = tempSerialArray[x * 6 + y];
     }
   }
 }
