@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Shape Creator</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<!-- <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Logo</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Projects</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav> -->
+  
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <!-- <div class="col-sm-2 sidenav">
+      <p><a href="#">Link</a></p>
+      <p><a href="#">Link</a></p>
+      <p><a href="#">Link</a></p>
+    </div> -->
+    <div class="col-sm-8 text-left"> 
+      <h1>Shape Creator</h1><hr>
+    </div>
+  </div>
+</div>
+
+<style>
+    .gridRow {
+        margin: 0 px;
+        padding: 0 px;
+    }
+</style>
+
+<!-- create a 9 row by 16 column table of checkboxes to create a shape -->
+<div class="container-fluid text-center">    
+  <div class="row content">
+    <div class="col-sm-8 text-left"> 
+      <table id="checkboxHolder" class="grid">
+      </table>
+    </div>
+  </div>
+
+<script>
+    // Script to generate a 9 row by 16 column table of checkboxes to create a shape
+    var table = document.getElementById("checkboxHolder");
+    for (var i = 0; i < 9; i++) {
+        var row = table.insertRow(i);
+        row.className = "gridRow";
+        for (var j = 0; j < 16; j++) {
+            var cell = row.insertCell(j);
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = "checkbox" + i + j;
+            checkbox.name = "checkbox" + i + j;
+            checkbox.className = "checkbox";
+            checkbox.value = "value";
+            cell.appendChild(checkbox);
+        }
+    }
+</script>
+
+<script>
+    // function to interpret each checkbox as an on/off bit and then convert each row to a hexadecimal number
+    // then append all of them to a string to make a 9-character long hexadecimal string
+    function convertToHex() {
+        var hexString = "";
+        for (var i = 0; i < 9; i++) {
+            var row = document.getElementById("checkboxHolder").rows[i];
+            var rowHex = "";
+            for (var j = 0; j < 16; j++) {
+                var checkbox = row.cells[j].childNodes[0];
+                if (checkbox.checked) {
+                    rowHex += "1";
+                } else {
+                    rowHex += "0";
+                }
+            }
+            var hexRowVal = parseInt(rowHex, 2).toString(16);
+            if (hexRowVal.length == 1) {
+                hexRowVal = "000" + hexRowVal;
+            }
+            else if (hexRowVal.length == 2) {
+                hexRowVal = "00" + hexRowVal;
+            }
+            else if (hexRowVal.length == 3) {
+                hexRowVal = "0" + hexRowVal;
+            }
+            hexString += hexRowVal;
+        }
+        return hexString;
+    }  
+
+    function outputToHTML(hexString) {
+        document.getElementById("hexString").innerHTML = hexString;
+    }
+</script>
+
+<button onclick="alert(outputToHTML(convertToHex()))">Convert to Hex</button>
+<p id="hexString" style="font: Roboto Mono"></p>
+
+<!-- <footer class="container-fluid text-center">
+  <p>Footer Text</p>
+</footer> -->
+
+</body>
+</html>
