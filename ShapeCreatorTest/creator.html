@@ -149,9 +149,20 @@
     function outputToHTML(hexString) {
         document.getElementById("hexString").innerHTML = hexString;
     }
+
+    // code for copying to clipboard
+    function copyToClipboard(stringVal) {
+        var dummy = document.createElement("textarea");
+        document.body.appendChild(dummy);
+        dummy.value = stringVal;
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+    }
 </script>
 
-<button onclick="alert(outputToHTML(convertToHex()))">Convert to Hex</button>
+<button onclick="outputToHTML(convertToHex())">Convert to Hex</button>
+<button onclick="copyToClipboard(convertToHex())">Copy to Clipboard</button>
 <p id="hexString" style="font: Roboto Mono"></p>
 
 <!-- <footer class="container-fluid text-center">
