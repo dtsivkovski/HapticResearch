@@ -7,6 +7,12 @@ Adafruit_IS31FL3731 matrix = Adafruit_IS31FL3731();
 
 void setup() {
   Serial.begin(9600);
+  if (! matrix.begin()) {
+    Serial.println("IS31 not found");
+    while (1);
+  }
+  Serial.println("IS31 Found!");
+  matrix.clear();
   // Initialize any necessary hardware and arrays as needed.
 }
 

@@ -15,6 +15,7 @@
       const data = document.getElementById("dataInput").value;
       try {
         const port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 9600 });
 
         const writer = port.writable.getWriter();
         await writer.write(data);
