@@ -99,10 +99,10 @@
 <script>
     // Script to generate a 9 row by 16 column table of checkboxes to create a shape
     var table = document.getElementById("checkboxHolder");
-    for (var i = 0; i < 9; i++) {
+    for (var i = 0; i < 8; i++) {
         var row = table.insertRow(i);
         row.className = "gridRow";
-        for (var j = 0; j < 16; j++) {
+        for (var j = 0; j < 8; j++) {
             var cell = row.insertCell(j);
             var checkbox = document.createElement("input");
             checkbox.type = "checkbox";
@@ -120,10 +120,10 @@
     // then append all of them to a string to make a 9-character long hexadecimal string
     function convertToHex() {
         var hexString = "";
-        for (var i = 0; i < 9; i++) {
+        for (var i = 0; i < 8; i++) {
             var row = document.getElementById("checkboxHolder").rows[i];
             var rowHex = "";
-            for (var j = 0; j < 16; j++) {
+            for (var j = 0; j < 8; j++) {
                 var checkbox = row.cells[j].childNodes[0];
                 if (checkbox.checked) {
                     rowHex += "1";
@@ -133,12 +133,6 @@
             }
             var hexRowVal = parseInt(rowHex, 2).toString(16);
             if (hexRowVal.length == 1) {
-                hexRowVal = "000" + hexRowVal;
-            }
-            else if (hexRowVal.length == 2) {
-                hexRowVal = "00" + hexRowVal;
-            }
-            else if (hexRowVal.length == 3) {
                 hexRowVal = "0" + hexRowVal;
             }
             hexString += hexRowVal;

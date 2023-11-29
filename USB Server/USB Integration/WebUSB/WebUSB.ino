@@ -5,6 +5,9 @@
 
 Adafruit_IS31FL3731 matrix = Adafruit_IS31FL3731();
 
+const int ncols = 8;
+const int nrows = 8;
+
 void setup() {
   Serial.begin(9600);
   if (! matrix.begin()) {
@@ -92,17 +95,17 @@ String hexToBinaryString(char hexChar) {
 void hexToPixelArray(String hexString) {
 
   // Check if the input string is the correct length (9 rows x 16 columns x 4 bits)
-  if (hexString.length() != 9 * 16 / 4) {
+  if (hexString.length() != nrows * ncols / 4) {
     Serial.println("Invalid input string length.");
     return;
   }
 
   // Convert the hexadecimal string to pixel data
-  uint16_t pixelData[9][16];
+  uint16_t pixelData[nrows][ncols];
 
-  for (int row = 0; row < 9; row++) {
-    for (int col = 0; col < 16; col += 4) {
-      char hexChar = hexString[(row * 16 / 4) + (col / 4)];
+  for (int row = 0; row < nrows; row++) {
+    for (int col = 0; col < ncols; col += 4) {
+      char hexChar = hexString[(row * ncols / 4) + (col / 4)];
       String binaryString = hexToBinaryString(hexChar);
 
       // Set the corresponding 4 pixels in the matrix based on the binary string
@@ -115,10 +118,10 @@ void hexToPixelArray(String hexString) {
   // Display the pixel data on the matrix
   matrix.setRotation(3);
 
-  for (int row = 0; row < 9; row++) {
-    for (int col = 0; col < 16; col++) {
+  for (int row = 0; row < nrows; row++) {
+    for (int col = 0; col < ncols; col++) {
       Serial.print(pixelData[row][col]);
-        matrix.drawPixel(row, 15-col, pixelData[row][col] * 777);
+        matrix.drawPixel(row, (ncols-1)-col, pixelData[row][col] * 777);
     }
     Serial.println();
   }
