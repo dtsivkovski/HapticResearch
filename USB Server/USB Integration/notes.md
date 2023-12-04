@@ -13,3 +13,15 @@
     - Does not open port on the same serial so not sure how to implement that.
 - Attempted to make a .js script with Serialport module
     - Returns "access denied" to open the port.
+
+
+```
+(pos,index)
+
+030303
+141414
+252525
+030303
+141414
+252525
+```

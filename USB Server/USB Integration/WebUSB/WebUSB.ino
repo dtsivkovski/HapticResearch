@@ -5,8 +5,8 @@
 
 Adafruit_IS31FL3731 matrix = Adafruit_IS31FL3731();
 
-const int ncols = 8;
-const int nrows = 8;
+const int ncols = 6;
+const int nrows = 6;
 
 void setup() {
   Serial.begin(9600);
