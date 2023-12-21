@@ -99,10 +99,10 @@
 <script>
     // Script to generate a 9 row by 16 column table of checkboxes to create a shape
     var table = document.getElementById("checkboxHolder");
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 6; i++) {
         var row = table.insertRow(i);
         row.className = "gridRow";
-        for (var j = 0; j < 8; j++) {
+        for (var j = 0; j < 6; j++) {
             var cell = row.insertCell(j);
             var checkbox = document.createElement("input");
             checkbox.type = "checkbox";
@@ -116,28 +116,21 @@
 </script>
 
 <script>
-    // function to interpret each checkbox as an on/off bit and then convert each row to a hexadecimal number
-    // then append all of them to a string to make a 9-character long hexadecimal string
-    function convertToHex() {
-        var hexString = "";
-        for (var i = 0; i < 8; i++) {
-            var row = document.getElementById("checkboxHolder").rows[i];
-            var rowHex = "";
-            for (var j = 0; j < 8; j++) {
-                var checkbox = row.cells[j].childNodes[0];
+    // function to interpret each checkbox as an on/off bit and then convert the entire array to a string of binary values
+    function convertToBinary() {
+        var binaryString = "";
+        var table = document.getElementById("checkboxHolder");
+        for (var i = 0; i < 6; i++) {
+            for (var j = 0; j < 6; j++) {
+                var checkbox = document.getElementById("checkbox" + i + j);
                 if (checkbox.checked) {
-                    rowHex += "1";
+                    binaryString += "1";
                 } else {
-                    rowHex += "0";
+                    binaryString += "0";
                 }
             }
-            var hexRowVal = parseInt(rowHex, 2).toString(16);
-            if (hexRowVal.length == 1) {
-                hexRowVal = "0" + hexRowVal;
-            }
-            hexString += hexRowVal;
         }
-        return hexString;
+        return binaryString;
     }  
 
     function outputToHTML(hexString) {
@@ -155,8 +148,8 @@
     }
 </script>
 
-<button onclick="outputToHTML(convertToHex())">Convert to Hex</button>
-<button onclick="copyToClipboard(convertToHex())">Copy to Clipboard</button>
+<button onclick="outputToHTML(convertToBinary())">Convert to Binary</button>
+<button onclick="copyToClipboard(convertToBinary())">Copy to Clipboard</button>
 <p id="hexString" style="font: Roboto Mono"></p>
 
 <!-- <footer class="container-fluid text-center">
