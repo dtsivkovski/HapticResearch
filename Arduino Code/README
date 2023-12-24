@@ -1,9 +1,0 @@
-Code for the ESP32 Devkit C connected to the IS31FL3731 from Adafriut over I2C
-You can edit, compile, and upload the code using Arduino IDE
-
-You will need to install support for the ESP32 in the IDE, as well as the appropriate libraries from Adafruit for the IS31FL3731
-
-Helpful links:
-https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/
-https://learn.adafruit.com/i31fl3731-16x9-charliplexed-pwm-led-driver/downloads
-https://randomnerdtutorials.com/esp32-i2c-communication-arduino-ide/#:~:text=When%20using%20the%20ESP32%20with,to%20use%20any%20other%20pins.
