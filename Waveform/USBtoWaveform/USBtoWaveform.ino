@@ -6,23 +6,23 @@ Adafruit_IS31FL3731 matrix = Adafruit_IS31FL3731();
 const int ncols = 6;
 const int nrows = 6;
 
-const int[][] waveformValues = {
+const int waveformValues[6][6] = {
   {1,4,1,4,1,4},
   {2,5,2,5,2,5},
   {3,6,3,6,3,6},
   {1,4,1,4,1,4},
   {2,5,2,5,2,5},
   {3,6,3,6,3,6}
-}
+};
 
-const int[][] waveformPositions = {
+const int waveformPositions[6][6] = {
   {1,1,2,2,3,3},
   {1,1,2,2,3,3},
   {1,1,2,2,3,3},
   {4,4,5,5,6,6},
   {4,4,5,5,6,6},
   {4,4,5,5,6,6}
-}
+};
 
 void setup() {
   Serial.begin(9600);
@@ -33,15 +33,6 @@ void setup() {
   Serial.println("IS31 Found!");
   matrix.clear();
   // Initialize any necessary hardware and arrays as needed.
-}
-
-void loop() {
-  if (Serial.available() > 0) {
-    String inputStr = Serial.readStringUntil('\n');
-    Serial.println(inputStr);
-    binaryToPixelArray(inputStr); // comment out if using waveform
-    // binaryToWaveForm(inputStr); // comment out if using pixel array
-  }
 }
 
 void binaryToPixelArray(String bString) {
@@ -95,4 +86,14 @@ void binaryToWaveForm(String bString) {
       }
       }
     }
+}
+
+
+void loop() {
+  if (Serial.available() > 0) {
+    String inputStr = Serial.readStringUntil('\n');
+    Serial.println(inputStr);
+    binaryToPixelArray(inputStr); // comment out if using waveform
+    // binaryToWaveForm(inputStr); // comment out if using pixel array
+  }
 }
