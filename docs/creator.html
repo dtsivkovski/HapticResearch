@@ -3,81 +3,24 @@
 <head>
   <title>Shape Creator</title>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <style>
-    /* Remove the navbar's default margin-bottom and rounded borders */ 
-    .navbar {
-      margin-bottom: 0;
-      border-radius: 0;
-    }
-    
-    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 450px}
-    
-    /* Set gray background color and 100% height */
-    .sidenav {
-      padding-top: 20px;
-      background-color: #f1f1f1;
-      height: 100%;
-    }
-    
-    /* Set black background color, white text and some padding */
-    footer {
-      background-color: #555;
-      color: white;
-      padding: 15px;
-    }
-    
-    /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
-        padding: 15px;
-      }
-      .row.content {height:auto;} 
-    }
-  </style>
+  <!-- import bootstrap 5.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/b33dd8950a.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
-<!-- <nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>                        
-      </button>
-      <a class="navbar-brand" href="#">Logo</a>
+<div class="jumbotron" style="justify-content: center; text-align: center;">
+    
+    <h1 class="pt-4">Shape Creator</h1>
+    <div class="pt-2 d-flex justify-content-center align-items-center"> 
+          <table id="checkboxHolder" class="grid">
+          </table>
     </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Projects</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      </ul>
+    <div class="pt-2">
+      <button class="btn btn-primary" onclick="outputToHTML(convertToBinary())">Convert to Binary</button>
+      <button class="btn btn-primary" onclick="copyToClipboard(convertToBinary())">Copy to Clipboard</button>
+      <p id="hexString" style="font: Roboto Mono"></p>
     </div>
-  </div>
-</nav> -->
-  
-<div class="container-fluid text-center">    
-  <div class="row content">
-    <!-- <div class="col-sm-2 sidenav">
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
-      <p><a href="#">Link</a></p>
-    </div> -->
-    <div class="col-sm-8 text-left"> 
-      <h1>Shape Creator</h1><hr>
-    </div>
-  </div>
 </div>
 
 <style>
@@ -85,23 +28,26 @@
         margin: 0 px;
         padding: 0 px;
     }
+    input[type="checkbox"] {
+      margin: 0;
+      padding: 0;
+    } 
+    td, tr {
+      margin: 0;
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-top: 0px;
+      padding-bottom: 0px;
+    }
 </style>
 
-<!-- create a 9 row by 16 column table of checkboxes to create a shape -->
-<div class="container-fluid text-center">    
-  <div class="row content">
-    <div class="col-sm-8 text-left"> 
-      <table id="checkboxHolder" class="grid">
-      </table>
-    </div>
-  </div>
 
 <script>
     // Script to generate a 9 row by 16 column table of checkboxes to create a shape
     var table = document.getElementById("checkboxHolder");
     for (var i = 0; i < 6; i++) {
         var row = table.insertRow(i);
-        row.className = "gridRow";
+        row.className = "p-0 m-0 gridRow";
         for (var j = 0; j < 6; j++) {
             var cell = row.insertCell(j);
             var checkbox = document.createElement("input");
@@ -147,14 +93,6 @@
         document.body.removeChild(dummy);
     }
 </script>
-
-<button onclick="outputToHTML(convertToBinary())">Convert to Binary</button>
-<button onclick="copyToClipboard(convertToBinary())">Copy to Clipboard</button>
-<p id="hexString" style="font: Roboto Mono"></p>
-
-<!-- <footer class="container-fluid text-center">
-  <p>Footer Text</p>
-</footer> -->
 
 </body>
 </html>
