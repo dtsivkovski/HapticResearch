@@ -3,8 +3,11 @@
 
 Adafruit_IS31FL3731 matrix = Adafruit_IS31FL3731();
 
-const int ncols = 6;
-const int nrows = 6;
+const int ncols = 8;
+const int nrows = 8;
+
+/*
+// waveform values and positions for a 6x6 matrix, uncomment if using the waveform for piezos
 
 const int waveformValues[6][6] = {
   {1,4,1,4,1,4},
@@ -23,6 +26,8 @@ const int waveformPositions[6][6] = {
   {4,4,5,5,6,6},
   {4,4,5,5,6,6}
 };
+
+*/
 
 void setup() {
   Serial.begin(9600);
