@@ -53,8 +53,10 @@ void binaryToPixelArray(String bString) {
 
   for (int row = 0; row < nrows; row++) {
     for (int col = 0; col < ncols; col++) {
+      // gets the binary character at current position
         char bval = bString[(row * ncols) + col];
 
+      // uses a ternary operator to determine whether the 2D array value is a 1 or a 0
         pixelData[row][col] = bval == '1' ? 1 : 0;
       }
     }
