@@ -42,7 +42,7 @@ void setup() {
 
 void binaryToPixelArray(String bString) {
 
-  // Check if the input string is the correct length (9 rows x 16 columns)
+  // Check if the input string is the correct length 
   if (bString.length() != nrows * ncols) {
     Serial.println("Invalid input string length.");
     return;
