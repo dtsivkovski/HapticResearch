@@ -45,10 +45,10 @@
 <script>
     // Script to generate a 9 row by 16 column table of checkboxes to create a shape
     var table = document.getElementById("checkboxHolder");
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 8; i++) {
         var row = table.insertRow(i);
         row.className = "p-0 m-0 gridRow";
-        for (var j = 0; j < 6; j++) {
+        for (var j = 0; j < 8; j++) {
             var cell = row.insertCell(j);
             var checkbox = document.createElement("input");
             checkbox.type = "checkbox";
@@ -66,8 +66,8 @@
     function convertToBinary() {
         var binaryString = "";
         var table = document.getElementById("checkboxHolder");
-        for (var i = 0; i < 6; i++) {
-            for (var j = 0; j < 6; j++) {
+        for (var i = 0; i < 8; i++) {
+            for (var j = 0; j < 8; j++) {
                 var checkbox = document.getElementById("checkbox" + i + j);
                 if (checkbox.checked) {
                     binaryString += "1";
