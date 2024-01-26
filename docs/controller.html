@@ -15,30 +15,30 @@
   <h3 id="connection-status"></h3>
   <div class="py-3">
     <button class="btn btn-primary" id="connectButton">Connect to Arduino</button>
-    <button class="btn btn-danger" onclick="sendData('000000000000000000000000000000000000')">Clear Display</button>
+    <button class="btn btn-danger" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
   </div>
   <div class="pt-2">
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('001100010010100001100001010010001100')">
+    <button class="btn btn-primary p-3 m-1" onclick="sendData('0001100001100110010000101000000110000001010000100110011000011000')">
       <p>Send Circle</p>
       <i class="fa-regular fa-circle fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('111111100001100001100001100001111111')">
+    <button class="btn btn-primary p-3 m-1" onclick="sendData('0000000001111110010000100100001001000010010000100111111000000000')">
       <p>Send Square</p>
       <i class="fa-regular fa-square fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('001000010100100010111110000000000000')">
+    <button class="btn btn-primary p-3 m-1" onclick="sendData('0000000000000000000100000010100001000100111111100000000000000000')">
       <p>Send Triangle</p>
       <i class="fa-solid fa-caret-up fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('010100101010100010010100001000000000')">
+    <button class="btn btn-primary p-3 m-1" onclick="sendData('0000000001101100100100101000001001000100001010000001000000000000')">
       <p>Send Heart</p>
       <i class="fa-solid fa-heart fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('100010010100001000010100100010000000')">
+    <button class="btn btn-primary p-3 m-1" onclick="sendData('1000001001000100001010000001000000101000010001001000001000000000')">
       <p>Send X-Cross</p>
       <i class="fa-solid fa-times fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('001000001000111110001000001000000000')">
+    <button class="btn btn-primary p-3 m-1" onclick="sendData('0001000000010000000100001111111000010000000100000001000000000000')">
       <p>Send Plus-Cross</p>
       <i class="fa-solid fa-plus fa-3x"></i>
     </button>
@@ -46,8 +46,13 @@
   <div class="pt-2">
     <h2>Number Sender</h2>
     <p>Enter a number (0-99999) to send to the arduino.</p>
-    <input type="number" id="numberInput" min="0" max="99999" value="0">
-    <button class="btn btn-primary" onclick="sendNumber()">Send Number</button>
+    <div class="input-group m-3">
+      <input class="form-control" type="number" id="numberInput" min="0" max="99999" value="0">
+      <div class="input-group-append">
+        <button class="btn btn-primary" onclick="sendNumber()">Send Number</button>
+      </div>
+    </div>
+  </div>
   
   <script>
     let serialPort;
@@ -83,48 +88,62 @@
       }
     });
 
-    const numDictionary = {
-      0: '011100',
-      1: '100000',
-      2: '101000',
-      3: '110000',
-      4: '110100',
-      5: '100100',
-      6: '111000',
-      7: '111100',
-      8: '101100',
-      9: '011000'
-    }
-
-    const posDictionary = {
-      1: '00',
-      2: '03',
-      3: '06',
-      4: '40',
-      5: '43',
-      6: '46'
+    // this dictionary is for the 6-pin braille output of the numbers 0-9
+    const nDict = {
+      '0': '011100',
+      '1': '100000',
+      '2': '101000',
+      '3': '110000',
+      '4': '110100',
+      '5': '100100',
+      '6': '111000',
+      '7': '111100',
+      '8': '101100',
+      '9': '011000',
+      'N': '010111',
+      ' ': '000000'
     }
 
     async function sendNumber() {
-      if (!serialPort || !serialPort.writable) {
-        console.error('Serial port not connected or not writable.');
-        return;
-      }
 
       const number = document.getElementById('numberInput').value;
-      const numString = number.toString();
+      var numString = number.toString();
       const numDigits = numString.length;
       const gap = '0';
       const centerGap = '00000000'
 
-      var outputString = "01";
+      var outputString = "";
+
+      // add whitespace to the end of the numString to make it 5 characters long
+      if (numDigits < 5) {
+        for (var i = 0; i < (5 - numDigits); i++) {
+          numString = numString + ' ';
+        }
+      }
       
-      // adds the top of the number to the output string
+      // row 1
+      outputString = outputString + nDict['N'].substring(0,2) + gap + nDict[numString[0]].substring(0,2) + gap + nDict[numString[1]].substring(0,2);
 
-      // starts with number sign, first digit, second digit
+      // row 2
+      outputString = outputString + nDict['N'].substring(2,4) + gap + nDict[numString[0]].substring(2,4) + gap + nDict[numString[1]].substring(2,4);
 
+      // row 3
+      outputString = outputString + nDict['N'].substring(4,6) + gap + nDict[numString[0]].substring(4,6) + gap + nDict[numString[1]].substring(4,6);
 
+      // row 4 and 5 - center gap
+      outputString = outputString + centerGap + centerGap;
 
+      // row 6
+      outputString = outputString + nDict[numString[2]].substring(0,2) + gap + nDict[numString[3]].substring(0,2) + gap + nDict[numString[4]].substring(0,2);
+
+      // row 7
+      outputString = outputString + nDict[numString[2]].substring(2,4) + gap + nDict[numString[3]].substring(2,4) + gap + nDict[numString[4]].substring(2,4);
+
+      // row 8
+      outputString = outputString + nDict[numString[2]].substring(4,6) + gap + nDict[numString[3]].substring(4,6) + gap + nDict[numString[4]].substring(4,6);
+
+      // send the outputString to the arduino
+      sendData(outputString);
       
     }
   </script>
