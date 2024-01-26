@@ -43,6 +43,11 @@
       <i class="fa-solid fa-plus fa-3x"></i>
     </button>
   </div>
+  <div class="pt-2">
+    <h2>Number Sender</h2>
+    <p>Enter a number (0-99999) to send to the arduino.</p>
+    <input type="number" id="numberInput" min="0" max="99999" value="0">
+    <button class="btn btn-primary" onclick="sendNumber()">Send Number</button>
   
   <script>
     let serialPort;
@@ -77,6 +82,51 @@
         document.getElementById('connection-status').textContent = 'Connection failed';
       }
     });
+
+    const numDictionary = {
+      0: '011100',
+      1: '100000',
+      2: '101000',
+      3: '110000',
+      4: '110100',
+      5: '100100',
+      6: '111000',
+      7: '111100',
+      8: '101100',
+      9: '011000'
+    }
+
+    const posDictionary = {
+      1: '00',
+      2: '03',
+      3: '06',
+      4: '40',
+      5: '43',
+      6: '46'
+    }
+
+    async function sendNumber() {
+      if (!serialPort || !serialPort.writable) {
+        console.error('Serial port not connected or not writable.');
+        return;
+      }
+
+      const number = document.getElementById('numberInput').value;
+      const numString = number.toString();
+      const numDigits = numString.length;
+      const gap = '0';
+      const centerGap = '00000000'
+
+      var outputString = "01";
+      
+      // adds the top of the number to the output string
+
+      // starts with number sign, first digit, second digit
+
+
+
+      
+    }
   </script>
   </div>
 </body>
