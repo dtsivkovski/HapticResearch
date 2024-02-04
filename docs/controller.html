@@ -43,16 +43,18 @@
       <i class="fa-solid fa-plus fa-3x"></i>
     </button>
   </div>
-  <div class="pt-2">
-    <h2>Number Sender</h2>
-    <p>Enter a number (From -9999 to 99999) or a one-step operation (2+10) to send to the arduino.</p>
-    <div class="input-group m-3">
-      <input class="form-control" type="text" id="numberInput" min="0" max="99999" value="0">
-      <div class="input-group-append">
-        <button class="btn btn-primary" onclick="sendNumber()">Send Number</button>
-      </div>
-    </div>
-  </div>
+  <div class="d-flex justify-content-center pt-4">
+   <div class="p-2 w-50">
+     <h2>Number Sender</h2>
+     <p>Enter a number (From -9999 to 99999) or a one-step operation (2+10) to send to the arduino.</p>
+     <div class="input-group m-3">
+       <input class="form-control" type="text" id="numberInput" min="0" max="99999" value="0">
+       <div class="input-group-append">
+         <button class="btn btn-primary" onclick="sendNumber()">Send Number</button>
+       </div>
+     </div>
+   </div>
+   </div>
   
   <script>
     let serialPort;
@@ -89,6 +91,7 @@
     });
 
     // this dictionary is for the 6-pin braille output of the numbers 0-9
+    // N for newline, - for negative sign, . for period, and space for whitespace
     const nDict = {
       '0': '011100',
       '1': '100000',
@@ -103,6 +106,7 @@
       'N': '010111',
       ' ': '000000',
       '-': '000011',
+      '.': '010001' 
     }
 
     async function sendNumber() {
@@ -111,13 +115,27 @@
       const number = document.getElementById('numberInput').value;
       console.log(number);
 
+      // check for operation in input
+      const [isOperation, resultString] = parseInput(number);
+
+      if (isOperation) {
+         console.log("Operation detected"); // continues through until done
+      }
+      else if (isOperation == false) {
+         console.log("No operation detected");
+      }
+      else if (isOperation == null) {
+         alert("Error! Please enter a valid operation or number.")
+         return;
+      }
+
       // give an error if number is not between -9999 and 99999\
-      if (number < -9999 || number > 99999) {
+      if (parseInt(resultString) < -9999 || parseInt(resultString) > 99999) {
         alert("The number must be between -9999 and 99999");
         return;
       }
 
-      var numString = number.toString();
+      var numString = resultString;
       // var numString = parseInput(numString);
       console.log(numString);
 
@@ -137,9 +155,11 @@
          processedNumString = "N" + numString;
       }
 
+      console.log('Processed Number String:', processedNumString)
+
       // add whitespace to the end of the processedNumString to make it a total of 6 characters long
       if (processedNumString.length < 6) {
-        for (var i = 0; i < (6 - processedNumString.length); i++) {
+        for (var i = processedNumString.length; i <= 6; i++) {
           processedNumString = processedNumString + ' ';
         }
       }
@@ -173,10 +193,10 @@
     }
 
     // parse number input for operations
-    /*
     function parseInput(string) {
 
       var outputString = "";
+      var hasOperation = false;
       
       // iterate through string length
       for (i = 0; i < string.length; i++) {
@@ -184,17 +204,67 @@
          switch(string[i]) {
             
             case '+':
-               parseInt(string.substring(0,i));
+               // check if there is already an operation
+               if (hasOperation == true) {
+                  alert("Only one operation is allowed");
+                  return [null, string];
+               }
+               // add the two numbers
+               var a = parseInt(string.substring(0,i));
+               var b = parseInt(string.substring(i+1, string.length));
+               outputString = (a + b).toString();
+               hasOperation = true;
+               break;
             case '-':
+               // check if there is already an operation
+               if (hasOperation == true) {
+                  alert("Only one operation is allowed");
+                  return [null, string];
+               }
+               // subtraction
+               var a = parseInt(string.substring(0,i));
+               var b = parseInt(string.substring(i+1, string.length));
+               outputString = (a - b).toString();
+               hasOperation = true;
+               break;
             case '*':
+               // check if there is already an operation
+               if (hasOperation == true) {
+                  alert("Only one operation is allowed");
+                  return [null, string];
+               }
+               // multipyl the two numbers
+               var a = parseInt(string.substring(0,i));
+               var b = parseInt(string.substring(i+1, string.length));
+               outputString = (a * b).toString();
+               hasOperation = true;
+               break;
+            case '/':
+               // check if there is already an operation
+               if (hasOperation == true) {
+                  alert("Only one operation is allowed");
+                  return [null, string];
+               }
+               // divide the numbers
+               var a = parseInt(string.substring(0,i));
+               var b = parseInt(string.substring(i+1, string.length));
+               outputString = (a / b).toFixed(2).toString();
+               hasOperation = true;
+               break;
+            default:
+               break;
          }
         
 
       }
       
-      return string;
+      if (hasOperation) {
+         return [true, outputString];
+      }
+      else {
+         return [false, string];
+      }
     }
-    */
 
   </script>
   </div>
