@@ -45,9 +45,9 @@
   </div>
   <div class="pt-2">
     <h2>Number Sender</h2>
-    <p>Enter a number (0-99999) to send to the arduino.</p>
+    <p>Enter a number (From -9999 to 99999) or a one-step operation (2+10) to send to the arduino.</p>
     <div class="input-group m-3">
-      <input class="form-control" type="number" id="numberInput" min="0" max="99999" value="0">
+      <input class="form-control" type="text" id="numberInput" min="0" max="99999" value="0">
       <div class="input-group-append">
         <button class="btn btn-primary" onclick="sendNumber()">Send Number</button>
       </div>
@@ -101,52 +101,101 @@
       '8': '101100',
       '9': '011000',
       'N': '010111',
-      ' ': '000000'
+      ' ': '000000',
+      '-': '000011',
     }
 
     async function sendNumber() {
 
       // get number from input and establish variabels
       const number = document.getElementById('numberInput').value;
+      console.log(number);
+
+      // give an error if number is not between -9999 and 99999\
+      if (number < -9999 || number > 99999) {
+        alert("The number must be between -9999 and 99999");
+        return;
+      }
+
       var numString = number.toString();
+      // var numString = parseInput(numString);
+      console.log(numString);
+
+      var processedNumString = "";
+
       const numDigits = numString.length;
       const gap = '0';
       const centerGap = '00000000'
 
       var outputString = "";
 
-      // add whitespace to the end of the numString to make it 5 characters long
-      if (numDigits < 5) {
-        for (var i = 0; i < (5 - numDigits); i++) {
-          numString = numString + ' ';
+      // check if first string value is a negative sign
+      if (numString[0] == '-') {
+        processedNumString = "-N" + numString.substring(1, numDigits);
+      }
+      else {
+         processedNumString = "N" + numString;
+      }
+
+      // add whitespace to the end of the processedNumString to make it a total of 6 characters long
+      if (processedNumString.length < 6) {
+        for (var i = 0; i < (6 - processedNumString.length); i++) {
+          processedNumString = processedNumString + ' ';
         }
       }
+
+      console.log(processedNumString);
       
       // row 1
-      outputString = outputString + nDict['N'].substring(0,2) + gap + nDict[numString[0]].substring(0,2) + gap + nDict[numString[1]].substring(0,2);
+      outputString = outputString + nDict[processedNumString[0]].substring(0,2) + gap + nDict[processedNumString[1]].substring(0,2) + gap + nDict[processedNumString[2]].substring(0,2);
 
       // row 2
-      outputString = outputString + nDict['N'].substring(2,4) + gap + nDict[numString[0]].substring(2,4) + gap + nDict[numString[1]].substring(2,4);
+      outputString = outputString + nDict[processedNumString[0]].substring(2,4) + gap + nDict[processedNumString[1]].substring(2,4) + gap + nDict[processedNumString[2]].substring(2,4);
 
       // row 3
-      outputString = outputString + nDict['N'].substring(4,6) + gap + nDict[numString[0]].substring(4,6) + gap + nDict[numString[1]].substring(4,6);
+      outputString = outputString + nDict[processedNumString[0]].substring(4,6) + gap + nDict[processedNumString[1]].substring(4,6) + gap + nDict[processedNumString[2]].substring(4,6);
 
       // row 4 and 5 - center gap
       outputString = outputString + centerGap + centerGap;
 
       // row 6
-      outputString = outputString + nDict[numString[2]].substring(0,2) + gap + nDict[numString[3]].substring(0,2) + gap + nDict[numString[4]].substring(0,2);
+      outputString = outputString + nDict[processedNumString[3]].substring(0,2) + gap + nDict[processedNumString[4]].substring(0,2) + gap + nDict[processedNumString[5]].substring(0,2);
 
       // row 7
-      outputString = outputString + nDict[numString[2]].substring(2,4) + gap + nDict[numString[3]].substring(2,4) + gap + nDict[numString[4]].substring(2,4);
+      outputString = outputString + nDict[processedNumString[3]].substring(2,4) + gap + nDict[processedNumString[4]].substring(2,4) + gap + nDict[processedNumString[5]].substring(2,4);
 
       // row 8
-      outputString = outputString + nDict[numString[2]].substring(4,6) + gap + nDict[numString[3]].substring(4,6) + gap + nDict[numString[4]].substring(4,6);
+      outputString = outputString + nDict[processedNumString[3]].substring(4,6) + gap + nDict[processedNumString[4]].substring(4,6) + gap + nDict[processedNumString[5]].substring(4,6);
 
       // send the outputString to the arduino
       sendData(outputString);
       
     }
+
+    // parse number input for operations
+    /*
+    function parseInput(string) {
+
+      var outputString = "";
+      
+      // iterate through string length
+      for (i = 0; i < string.length; i++) {
+        
+         switch(string[i]) {
+            
+            case '+':
+               parseInt(string.substring(0,i));
+            case '-':
+            case '*':
+         }
+        
+
+      }
+      
+      return string;
+    }
+    */
+
   </script>
   </div>
 </body>
