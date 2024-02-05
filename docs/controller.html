@@ -91,6 +91,9 @@
         <div class="pt-2">
           <button class="btn btn-primary" onclick="createCustomShape()">Add Custom Shape to Library</button>
         </div>
+        <div class="d-flex justify-content-center pt-5 pb-1">
+          <h2>Custom Shape Library</h2>
+        </div>
         <div class="div pt-2" id="customShapeLibrary">
         </div>
       </div>
@@ -107,15 +110,78 @@
       // get all shapes from local storage and display them in the custom shapes section
       const customShapes = JSON.parse(localStorage.getItem('customShapes'));
       if (customShapes) {
-        // iterate through all
+        // iterate through all, create table to hold each custom shape
+        // rows include the name of the shape, a send button, and a delete button
+        const customShapeLibrary = document.getElementById('customShapeLibrary');
+        const table = document.createElement('table');
+        table.className = 'table table-dark rounded border-white';
+        table.innerHTML = `
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Send</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+        `;
+
         for (const shape of customShapes) {
-          const shapeButton = document.createElement('button');
-          shapeButton.className = 'btn btn-primary p-3 m-1';
-          shapeButton.textContent = shape.name;
-          shapeButton.onclick = () => sendData(shape.data);
-          document.getElementById('customShapeLibrary').appendChild(shapeButton);
+          const row = document.createElement('tr');
+          const nameCell = document.createElement('td');
+          nameCell.textContent = shape.name;
+          const sendCell = document.createElement('td');
+          const sendButton = document.createElement('button');
+          sendButton.className = 'btn btn-primary m-1 bg-primary';
+          sendButton.textContent = 'Send';
+          sendButton.onclick = () => sendData(shape.data);
+          sendCell.appendChild(sendButton);
+          const deleteCell = document.createElement('td');
+          const deleteButton = document.createElement('button');
+          deleteButton.className = 'btn btn-danger m-1 bg-danger';
+          deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+          deleteButton.onclick = () => {
+            const customShapes = JSON.parse(localStorage.getItem('customShapes'));
+            const newShapes = customShapes.filter(s => s.name !== shape.name);
+            localStorage.setItem('customShapes', JSON.stringify(newShapes));
+            location.reload();
+          }
+          deleteCell.appendChild(deleteButton);
+          row.appendChild(nameCell);
+          row.appendChild(sendCell);
+          row.appendChild(deleteCell);
+          table.appendChild(row);
         }
+        customShapeLibrary.appendChild(table);
       }
+    }
+
+    // function to take each checkbox as 1/0 and convert it all to a binary string
+    // then it saves the string to the local storage along with its name as a custom shape
+    function createCustomShape() {
+      var binaryString = "";
+      var table = document.getElementById("checkboxHolder");
+      // iterate through checkboxes and append to string
+      for (var i = 0; i < 8; i++) {
+          for (var j = 0; j < 8; j++) {
+              var checkbox = document.getElementById("checkbox" + i + j);
+              if (checkbox.checked) {
+                  binaryString += "1";
+              } else {
+                  binaryString += "0";
+              }
+          }
+      }
+      // check name of shape
+      const customShapeName = document.getElementById('customShapeName').value;
+      if (!customShapeName) {
+        alert('Please enter a name for the custom shape.');
+        return;
+      }
+      // get custom shapes lsit from local storage or create new
+      const customShapes = JSON.parse(localStorage.getItem('customShapes')) || [];
+      customShapes.push({ name: customShapeName, data: binaryString });
+      localStorage.setItem('customShapes', JSON.stringify(customShapes));
+      location.reload(); // refresh page
     }
 
 
@@ -166,10 +232,12 @@
         serialPort = await navigator.serial.requestPort();
         await serialPort.open({ baudRate: 9600 });
         console.log('Serial port connected.');
-        document.getElementById('connection-status').textContent = 'Connected to: ' + serialPort.getInfo().usbProductId + ' - ' + serialPort.getInfo().usbVendorId;
+        document.getElementById('connection-status').textContent = 'Status: Connected';
+        document.getElementById('connection-status').className = 'text-success';
       } catch (error) {
         console.error('Error connecting to serial port:', error);
         document.getElementById('connection-status').textContent = 'Connection failed. Please try again.';
+        document.getElementById('connection-status').className = 'text-danger';
       }
     });
 
