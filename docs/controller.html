@@ -10,13 +10,23 @@
   <link rel="icon" href="appicon.ico">
 </head>
 <body class="bg-dark text-light">
+  <style>
+    .sticky {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #000;
+    }
+  </style>
   <div class="jumbotron" style="justify-content: center; text-align: center;">
-  
-  <h1 class="pt-4">Shape App</h1>
-  <h3 id="connection-status"></h3>
-  <div class="py-3">
-    <button class="btn btn-primary" id="connectButton">Connect to Arduino</button>
-    <button class="btn btn-danger" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
+  <div class="sticky bg-dark pb-4">
+    <h1 class="pt-4">Braille Display Controller</h1>
+    <h3 id="connection-status"></h3>
+    <div class="pt-2">
+      <button class="btn btn-primary mx-1" id="connectButton">Connect to Arduino</button>
+      <button class="btn btn-danger mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
+    </div>
   </div>
   <div class="pt-2">
     <button class="btn btn-primary p-3 m-1" onclick="sendData('0001100001100110010000101000000110000001010000100110011000011000')">
@@ -101,60 +111,75 @@
     </div>
   
   <script>
-    // display the custom shapes section if the user has enabled it
-    if (localStorage.getItem('customShapesEnabled') == 'true') {
-      document.getElementById('customShapeConfigurator').style.display = 'block';
-      document.getElementById('customShapeEnablerButton').textContent = 'Disable Custom Shapes';
-      document.getElementById('customShapeEnablerButton').classList.remove('btn-primary');
-      document.getElementById('customShapeEnablerButton').classList.add('btn-warning');
 
-      // get all shapes from local storage and display them in the custom shapes section
-      const customShapes = JSON.parse(localStorage.getItem('customShapes'));
-      if (customShapes) {
-        // iterate through all, create table to hold each custom shape
-        // rows include the name of the shape, a send button, and a delete button
-        const customShapeLibrary = document.getElementById('customShapeLibrary');
-        const table = document.createElement('table');
-        table.className = 'table table-dark rounded border-white';
-        table.innerHTML = `
-          <thead>
-            <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Send</th>
-              <th scope="col">Delete</th>
-            </tr>
-          </thead>
-        `;
+    function refreshCustomShapes() {
+      // display the custom shapes section if the user has enabled it
+      if (localStorage.getItem('customShapesEnabled') == 'true') {
+        document.getElementById('customShapeConfigurator').style.display = 'block';
+        document.getElementById('customShapeEnablerButton').textContent = 'Disable Custom Shapes';
+        document.getElementById('customShapeEnablerButton').classList.remove('btn-primary');
+        document.getElementById('customShapeEnablerButton').classList.add('btn-warning');
 
-        for (const shape of customShapes) {
-          const row = document.createElement('tr');
-          const nameCell = document.createElement('td');
-          nameCell.textContent = shape.name;
-          const sendCell = document.createElement('td');
-          const sendButton = document.createElement('button');
-          sendButton.className = 'btn btn-primary m-1 bg-primary';
-          sendButton.textContent = 'Send';
-          sendButton.onclick = () => sendData(shape.data);
-          sendCell.appendChild(sendButton);
-          const deleteCell = document.createElement('td');
-          const deleteButton = document.createElement('button');
-          deleteButton.className = 'btn btn-danger m-1 bg-danger';
-          deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
-          deleteButton.onclick = () => {
-            const customShapes = JSON.parse(localStorage.getItem('customShapes'));
-            const newShapes = customShapes.filter(s => s.name !== shape.name);
-            localStorage.setItem('customShapes', JSON.stringify(newShapes));
-            location.reload();
+        // get all shapes from local storage and display them in the custom shapes section
+        const customShapes = JSON.parse(localStorage.getItem('customShapes'));
+        if (customShapes) {
+          // iterate through all, create table to hold each custom shape
+          // rows include the name of the shape, a send button, and a delete button
+          const customShapeLibrary = document.getElementById('customShapeLibrary');
+          // clear the library in case it was already populated
+          customShapeLibrary.innerHTML = '';
+
+          const table = document.createElement('table');
+          table.className = 'table table-dark rounded border-white';
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Send</th>
+                <th scope="col">Delete</th>
+              </tr>
+            </thead>
+          `;
+
+          for (const shape of customShapes) {
+            // create shape and append all necessary elements
+            const row = document.createElement('tr');
+            // name element
+            const nameCell = document.createElement('td');
+            nameCell.textContent = shape.name;
+            // send button
+            const sendCell = document.createElement('td');
+            const sendButton = document.createElement('button');
+            sendButton.className = 'btn btn-primary m-1 bg-primary';
+            sendButton.textContent = 'Send';
+            sendButton.onclick = () => sendData(shape.data);
+            sendCell.appendChild(sendButton);
+            // delete button
+            const deleteCell = document.createElement('td');
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn btn-danger m-1 bg-danger';
+            deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+            // delete the shape from local storage, refresh shapes section
+            deleteButton.onclick = () => {
+              const customShapes = JSON.parse(localStorage.getItem('customShapes'));
+              const newShapes = customShapes.filter(s => s.name !== shape.name);
+              localStorage.setItem('customShapes', JSON.stringify(newShapes));
+              refreshCustomShapes();
+            }
+            // append to table
+            deleteCell.appendChild(deleteButton);
+            row.appendChild(nameCell);
+            row.appendChild(sendCell);
+            row.appendChild(deleteCell);
+            table.appendChild(row);
           }
-          deleteCell.appendChild(deleteButton);
-          row.appendChild(nameCell);
-          row.appendChild(sendCell);
-          row.appendChild(deleteCell);
-          table.appendChild(row);
+          customShapeLibrary.appendChild(table);
         }
-        customShapeLibrary.appendChild(table);
       }
+      
     }
+
+    refreshCustomShapes();
 
     // function to take each checkbox as 1/0 and convert it all to a binary string
     // then it saves the string to the local storage along with its name as a custom shape
@@ -182,7 +207,7 @@
       const customShapes = JSON.parse(localStorage.getItem('customShapes')) || [];
       customShapes.push({ name: customShapeName, data: binaryString });
       localStorage.setItem('customShapes', JSON.stringify(customShapes));
-      location.reload(); // refresh page
+      refreshCustomShapes(); // refresh the shapes section to include the new shape
     }
 
 
@@ -190,13 +215,21 @@
     function toggleCustomShapes() {
       if (localStorage.getItem('customShapesEnabled') == 'true') {
         localStorage.setItem('customShapesEnabled', 'false');
-        location.reload();
+        document.getElementById('customShapeConfigurator').style.cssText = 'display: none !important;';
+        document.getElementById('customShapeEnablerButton').textContent = 'Enable Custom Shapes';
+        document.getElementById('customShapeEnablerButton').classList.remove('btn-warning');
+        document.getElementById('customShapeEnablerButton').classList.add('btn-primary');
+        refreshCustomShapes();
       } else {
         if (!confirm("Enabling custom shapes will allow you to create your own shapes, but these have not been tested for ease-of-readability. Are you sure you want to enable custom shapes?")) {
           return;
         }
         localStorage.setItem('customShapesEnabled', 'true');
-        location.reload();
+        document.getElementById('customShapeConfigurator').style.display = 'block';
+        document.getElementById('customShapeEnablerButton').textContent = 'Disable Custom Shapes';
+        document.getElementById('customShapeEnablerButton').classList.remove('btn-primary');
+        document.getElementById('customShapeEnablerButton').classList.add('btn-warning');
+        refreshCustomShapes(); 
       }
     }
 
@@ -233,12 +266,16 @@
         serialPort = await navigator.serial.requestPort();
         await serialPort.open({ baudRate: 9600 });
         console.log('Serial port connected.');
-        document.getElementById('connection-status').textContent = 'Status: Connected';
-        document.getElementById('connection-status').className = 'text-success';
+        // document.getElementById('connection-status').textContent = 'Status: Connected';
+        // document.getElementById('connection-status').className = 'text-success';
+        document.getElementById('connectButton').disabled = true;
+        document.getElementById('connectButton').textContent = 'Connected';
+        document.getElementById('connectButton').className = 'btn btn-success';
       } catch (error) {
         console.error('Error connecting to serial port:', error);
-        document.getElementById('connection-status').textContent = 'Connection failed. Please try again.';
-        document.getElementById('connection-status').className = 'text-danger';
+        // document.getElementById('connection-status').textContent = 'Connection failed. Please try again.';
+        // document.getElementById('connection-status').className = 'text-danger';
+        alert('Error connecting to serial port. Please try again.');
       }
     });
 
