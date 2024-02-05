@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <script src="https://kit.fontawesome.com/b33dd8950a.js" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="bg-dark text-light">
   <div class="jumbotron" style="justify-content: center; text-align: center;">
   
   <h1 class="pt-4">Shape App</h1>
@@ -61,16 +61,16 @@
    <div class="d-flex justify-content-center py-4" style="display: none !important;" id="customShapeConfigurator">
      <div class="p-2 w-75">
        <h2>Create a Custom Shape</h2>
-        <p>Click on the cells to create a custom shape, then click "Send Custom Shape" to send it to the arduino.</p>
+        <p>Click on the cells to create a custom shape, then click the button below to save it to your custom shape library.</p>
         <div class="pt-2 d-flex justify-content-center align-items-center"> 
-              <table id="checkboxHolder" class="grid">
+              <table id="checkboxHolder" class="grid bg-white mb-2">
               </table>
               <script>
                 // Script to generate a 8 row by 8 column table of checkboxes to create a shape
                 var table = document.getElementById("checkboxHolder");
                 for (var i = 0; i < 8; i++) {
                     var row = table.insertRow(i);
-                    row.className = "p-0 m-0 gridRow";
+                    row.className = "p-0 m-0 gridRow bg-light";
                     for (var j = 0; j < 8; j++) {
                         var cell = row.insertCell(j);
                         var checkbox = document.createElement("input");
@@ -85,7 +85,9 @@
                 }
             </script>
         </div>
-        <input class="form-control" type="text" id="customShapeName" placeholder="Shape Name">
+        <div class="d-flex justify-content-center text-center">
+          <input class="form-control w-25 text-center" type="text" id="customShapeName" placeholder="Shape Name">
+        </div>
         <div class="pt-2">
           <button class="btn btn-primary" onclick="createCustomShape()">Add Custom Shape to Library</button>
         </div>
