@@ -422,7 +422,8 @@
       var hasOperation = false;
       
       // iterate through string length
-      for (i = 0; i < string.length; i++) {
+      // i = 1 skips first character as that can be a negative sign
+      for (i = 1; i < string.length; i++) {
         
          switch(string[i]) {
             
