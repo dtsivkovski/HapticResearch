@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Braille Display Controller</title>
+  <meta charset="utf-8">
+  <!-- import bootstrap 5.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/b33dd8950a.js" crossorigin="anonymous"></script>
+  <link rel="icon" href="appicon.ico">
+</head>
+<body class="bg-dark text-light">
+  <style>
+    .sticky {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #000;
+    }
+
+    .btn {
+      transform: translate(0,0);
+      transition: transform 0.3s;
+    }
+    .btn:hover {
+      transform: translate(0,-2px);
+      transition: transform 0.3s;
+    }
+  </style>
+  <div class="jumbotron" style="justify-content: center; text-align: center;">
+  <div class="bg-dark pb-4" id="stickyHeader">
+    <h1 class="pt-4">Braille Display Controller</h1>
+    <h3 id="connection-status"></h3>
+    <div class="pt-2">
+      <button class="btn btn-primary mx-1" id="connectButton">Connect to Arduino</button>
+      <button class="btn btn-danger mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
+      <button class="btn btn-primary mx-1" onclick="toggleSticky()" id="stickyButton"><i class="fa-solid fa-thumbtack"></i></button>
+    </div>
+  </div>
+
+  <script>
+    // get sticky status from local storage on page load
+    if (localStorage.getItem('stickyEnabled') == 'true') {
+      document.getElementById('stickyHeader').classList.add('sticky');
+      document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    }
+
+    function toggleSticky() {
+      const stickyHeader = document.getElementById('stickyHeader');
+      if (stickyHeader.classList.contains('sticky')) {
+        localStorage.setItem('stickyEnabled', 'false');
+        stickyHeader.classList.remove('sticky');
+        document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+      } else {
+        localStorage.setItem('stickyEnabled', 'true');
+        stickyHeader.classList.add('sticky');
+        document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      }
+    }
+  </script>
+
+  <script>
+    let serialPort;
+    const connectButton = document.getElementById('connectButton');
+
+    // function to connect to serial port
+    connectButton.addEventListener('click', async () => {
+      try {
+        serialPort = await navigator.serial.requestPort();
+        await serialPort.open({ baudRate: 9600 });
+        console.log('Serial port connected.');
+        // document.getElementById('connection-status').textContent = 'Status: Connected';
+        // document.getElementById('connection-status').className = 'text-success';
+        document.getElementById('connectButton').disabled = true;
+        document.getElementById('connectButton').textContent = 'Connected';
+        document.getElementById('connectButton').className = 'btn btn-success';
+      } catch (error) {
+        console.error('Error connecting to serial port:', error);
+        // document.getElementById('connection-status').textContent = 'Connection failed. Please try again.';
+        // document.getElementById('connection-status').className = 'text-danger';
+        alert('Error connecting to serial port. Please try again.');
+      }
+    });
+
+    // function to send data
+    async function sendData(data) {
+      if (!serialPort || !serialPort.writable) {
+        console.error('Serial port not connected or not writable.');
+        if(!serialPort) {
+          alert('Please connect to the serial port first.');
+          return;
+        }
+        else if(!serialPort.writable) {
+          alert('Serial port is not writable. Please reconnect.');
+        }
+        return;
+      }
+
+      // encodes the data being sent to the arduino port
+      const encoder = new TextEncoder();
+      const dataArray = encoder.encode(data);
+
+      // writing to the serial port of the arduino
+      const writer = serialPort.writable.getWriter();
+      await writer.write(dataArray);
+      writer.releaseLock();
+      console.log('Data sent to Arduino:', data);
+    }
+  </script>
+
+  <div class="pt-2">
+    <button class="btn btn-primary mx-1" onclick="playGame()">Start Game</button>
+  </div>
+  <div id="gamediv" class="pt-2 container justify-content-center text-center" style="display: none !important;">
+      <div class="pt-2">
+         <h3 id="gamequestion">What is 0+0?</h3>
+      </div>
+      <div class="py-2 d-flex justify-content-center text-center">
+         <input type="number" id="answer" class="form-control w-50 text-center" placeholder="Enter your answer">
+      </div>         
+      <button class="btn btn-primary mx-1" onclick="checkAnswer()">Submit</button>
+      <div id="answerDiv" style="display: none !important;"></div>
+  </div>
+
+  <script>
+
+      const nDict = {
+        '0': '011100',
+        '1': '100000',
+        '2': '101000',
+        '3': '110000',
+        '4': '110100',
+        '5': '100100',
+        '6': '111000',
+        '7': '111100',
+        '8': '101100',
+        '9': '011000',
+        'N': '010111',
+        'a': '010011', // addition
+        's': '000011', // subtraction
+        '*': '010000', // first sign for multiplication 
+        'm': '100001', // second sign for multiplication
+         // https://braillebug.org/braille/math-in-braille/
+         '/': '010001', // first sign for division
+         'd': '010010', // second sign for division
+         ' ': '000000'
+    }
+
+    function playGame() {
+
+      document.querySelector('#gamediv').style = "display: block !important";
+      // generate two numbers between 0 and 9
+      var num1 = Math.floor(Math.random() * 10);
+      var num2 = Math.floor(Math.random() * 10);
+
+      // generate a random operator (+, -, *)
+      const operators = ['+', '-', '*', '/'];
+      const operator = operators[Math.floor(Math.random() * operators.length)];
+
+      // if division is the operator, make sure the numbers are divisible without remainder
+      if (operator == '/') {
+
+         while (num1 % num2 != 0) {
+            num1 = Math.floor(Math.random() * 10);
+            num2 = Math.floor(Math.random() * 10);
+         }
+      }
+
+      // calculate the answer and build the numstring
+      var numString = "";
+      numString += "N" + num1;
+      var htmlString = "What is ";
+      htmlString += num1 + " " + operator + " " + num2 + " ? ";
+      document.querySelector('#gamequestion').textContent = htmlString;
+
+      var answer;
+      switch (operator) {
+         case '+':
+            answer = num1 + num2;
+            numString += "a" + num2 + "  ";
+            break;
+         case '-':
+            answer = num1 - num2;
+            numString += "s" + num2 + "  ";
+            break;
+         case '*':
+            answer = num1 * num2;
+            numString += "*" + "m" + num2 + " ";
+            break;
+         case '/':
+            answer = num1 / num2;
+            numString += "/" + "d" + num2 + " ";
+            break;
+      }
+
+      console.log(numString);
+
+      document.querySelector('#answerDiv').textContent = answer;
+
+      
+      const gap = '0';
+      const centerGap = '00000000'
+
+      // display the numbers and operator on the braille display 
+      // https://braillebug.org/braille/math-in-braille/
+
+      var outputString = "";
+
+
+      // row 1
+      outputString = outputString + nDict[numString[0]].substring(0, 2) + gap + nDict[numString[1]].substring(0, 2) + gap + nDict[numString[2]].substring(0, 2);
+
+      // row 2
+      outputString = outputString + nDict[numString[0]].substring(2, 4) + gap + nDict[numString[1]].substring(2, 4) + gap + nDict[numString[2]].substring(2, 4);
+
+      // row 3
+      outputString = outputString + nDict[numString[0]].substring(4, 6) + gap + nDict[numString[1]].substring(4, 6) + gap + nDict[numString[2]].substring(4, 6);
+
+      // row 4 and 5 - center gap
+      outputString = outputString + centerGap + centerGap;
+
+      // row 6
+      outputString = outputString + nDict[numString[3]].substring(0, 2) + gap + nDict[numString[4]].substring(0, 2) + gap + nDict[numString[5]].substring(0, 2);
+
+      // row 7
+      outputString = outputString + nDict[numString[3]].substring(2, 4) + gap + nDict[numString[4]].substring(2, 4) + gap + nDict[numString[5]].substring(2, 4);
+
+      // row 8
+      outputString = outputString + nDict[numString[3]].substring(4, 6) + gap + nDict[numString[4]].substring(4, 6) + gap + nDict[numString[5]].substring(4, 6);
+
+      // send the outputString to the arduino
+      sendData(outputString);
+
+    }
+
+    function checkAnswer() {
+      var userAnswer = document.querySelector('#answer').value;
+      var correctAnswer = document.querySelector('#answerDiv').textContent;
+      if (userAnswer == correctAnswer) {
+         alert('Correct!');
+      } else {
+         alert('Incorrect. The correct answer is ' + correctAnswer);
+      }
+
+      document.querySelector('#answer').value = "";
+
+      // wait 2 seconds, then play again
+      setTimeout(playGame, 2000);
+    }
+  </script>
+  
+
+</div>
+</body>
+</html>

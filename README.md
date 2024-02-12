@@ -4,5 +4,5 @@ Research on the display of shapes on a grid on an LED matrix display. This was i
 
 # Important Pages
 
-- [Custom Shape Creator](https://dtsivkovski.github.io/HapticResearch/creator.html)
-- [Shape App](https://dtsivkovski.github.io/HapticResearch/controller.html)
+- [Braille Display Controller](https://dtsivkovski.github.io/HapticResearch/controller.html)
+- [Math Game](https://dtsivkovski.github.io/HapticResearch/game.html)
