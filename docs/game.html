@@ -238,6 +238,11 @@
 
       document.querySelector('#answerDiv').textContent = answer;
 
+      sendNumber(numString);
+
+    }
+
+    function sendNumber(numString) {
       
       const gap = '0';
       const centerGap = '00000000'
@@ -271,7 +276,6 @@
 
       // send the outputString to the arduino
       sendData(outputString);
-
     }
 
     // check for enter key press when submitting answer
@@ -305,8 +309,13 @@
 
       document.querySelector('#answer').value = "";
 
-      // wait 2 seconds, then play again
-      setTimeout(playGame, 2000);
+      answerString = "N" + correctAnswer + "     ";
+      console.log(answerString);
+
+      sendNumber(answerString);
+
+      // wait 4 seconds, then play again
+      setTimeout(playGame, 4000);
     }
   </script>
   
