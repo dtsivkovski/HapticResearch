@@ -17,6 +17,7 @@
       top: 0;
       z-index: 1000;
       border-bottom: 1px solid #000;
+      background-color: #0f1d2a !important;
     }
 
     .btn {
@@ -35,7 +36,7 @@
     <div class="pt-2">
       <button class="btn btn-primary mx-1" id="connectButton">Connect to Arduino</button>
       <button class="btn btn-danger mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
-      <button class="btn btn-primary mx-1" onclick="toggleSticky()" id="stickyButton"><i class="fa-solid fa-thumbtack"></i></button>
+      <button class="btn btn-primary mx-1" onclick="toggleSticky()" title="Pin to top" id="stickyButton"><i class="fa-solid fa-thumbtack"></i></button>
     </div>
   </div>
 
@@ -44,6 +45,7 @@
     if (localStorage.getItem('stickyEnabled') == 'true') {
       document.getElementById('stickyHeader').classList.add('sticky');
       document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      document.getElementById('stickyButton').title = 'Unpin from top';
     }
 
     function toggleSticky() {
@@ -52,15 +54,19 @@
         localStorage.setItem('stickyEnabled', 'false');
         stickyHeader.classList.remove('sticky');
         document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+        document.getElementById('stickyButton').title = 'Pin to top';
       } else {
         localStorage.setItem('stickyEnabled', 'true');
         stickyHeader.classList.add('sticky');
         document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        document.getElementById('stickyButton').title = 'Unpin from top';
       }
     }
   </script>
-
-  <div class="pt-2">
+  <div class="pt-4">
+    <h2>Shape Sender</h2>
+  </div>
+  <div class="pt-1">
     <button class="btn btn-primary p-3 m-1" onclick="sendData('0001100001100110010000101000000110000001010000100110011000011000')">
       <p>Send Circle</p>
       <i class="fa-regular fa-circle fa-3x"></i>
@@ -99,9 +105,12 @@
    </div>
    </div>
    <div class="d-flex justify-content-center py-4">
-    <button class="btn btn-primary" onclick="toggleCustomShapes()" id="customShapeEnablerButton">Enable Custom Shapes</button>
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="customShapesSwitch">
+      <label class="form-check-label text-warning" for="customShapesSwitch">Enable Custom Shapes</label>
+    </div>
    </div>
-   <div class="d-flex justify-content-center py-4" style="display: none !important;" id="customShapeConfigurator">
+   <div class="d-flex justify-content-center py-4 d-none" style="border-top: #000 1px solid;" id="customShapeConfigurator">
      <div class="p-2 w-75">
       <div class="d-flex justify-content-center pb-1">
         <h2>Custom Shape Library</h2>
@@ -110,7 +119,14 @@
       </div>
        <h2>Create a Custom Shape</h2>
         <p>Click on the cells to create a custom shape, then click the button below to save it to your custom shape library.</p>
-        <div class="pt-1 d-flex justify-content-center align-items-center"> 
+        <br/>
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="imageCheckbox">
+            <label class="form-check-label" for="imageCheckbox">Create from image</label>
+          </div>
+        </div>
+        <div class="pt-1 d-flex justify-content-center align-items-center" id="gridDiv"> 
               <div class="bg-light p-2 mb-3" style="border-radius: 20px">
                 <table id="checkboxHolder" class="grid bg-white">
                 </table>
@@ -135,6 +151,11 @@
                 }
             </script>
         </div>
+        <div class="pt-1 d-flex d-none justify-content-center align-items-center" id="imageUploadDiv">
+          <div class="bg-light p-3 mb-3 justify-content-center align-items-center" style="border-radius: 20px">
+            <input class="form-control bg-dark text-light" type="file" id="imageUpload" accept="image/*">
+          </div>
+        </div>
         <div class="d-flex justify-content-center text-center">
           <input class="form-control w-25 text-center" type="text" id="customShapeName" placeholder="Shape Name">
         </div>
@@ -146,13 +167,30 @@
   
   <script>
 
+    document.querySelector('#imageCheckbox').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        document.getElementById('gridDiv').classList.add('d-none');
+        document.getElementById('imageUploadDiv').classList.remove('d-none');
+        localStorage.setItem('imageCheckboxEnabled', 'true');
+      } else {
+        document.getElementById('gridDiv').classList.remove('d-none');
+        document.getElementById('imageUploadDiv').classList.add('d-none');
+        localStorage.setItem('imageCheckboxEnabled', 'false');
+      }
+    });
+
+    // check the checkbox if the user has enabled it before
+    if (localStorage.getItem('imageCheckboxEnabled') == 'true') {
+      document.getElementById('imageCheckbox').checked = true;
+      document.getElementById('gridDiv').classList.add('d-none');
+      document.getElementById('imageUploadDiv').classList.remove('d-none');
+    }
+
     function refreshCustomShapes() {
       // display the custom shapes section if the user has enabled it
       if (localStorage.getItem('customShapesEnabled') == 'true') {
-        document.getElementById('customShapeConfigurator').style.display = 'block';
-        document.getElementById('customShapeEnablerButton').textContent = 'Disable Custom Shapes';
-        document.getElementById('customShapeEnablerButton').classList.remove('btn-primary');
-        document.getElementById('customShapeEnablerButton').classList.add('btn-warning');
+        document.getElementById('customShapeConfigurator').classList.remove('d-none');
+        document.getElementById('customShapesSwitch').checked = true;
 
         // get all shapes from local storage and display them in the custom shapes section
         const customShapes = JSON.parse(localStorage.getItem('customShapes'));
@@ -195,6 +233,11 @@
             deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
             // delete the shape from local storage, refresh shapes section
             deleteButton.onclick = () => {
+              // confirm if user wants to delete shape
+              if (!confirm(`Are you sure you want to delete the shape "${shape.name}"?`)) {
+                return;
+              }
+              // delete shape from local storage and from table
               const customShapes = JSON.parse(localStorage.getItem('customShapes'));
               const newShapes = customShapes.filter(s => s.name !== shape.name);
               localStorage.setItem('customShapes', JSON.stringify(newShapes));
@@ -215,9 +258,21 @@
 
     refreshCustomShapes();
 
+    function createCustomShapeFromImage() {
+      alert('Feature incomplete. Please use the checkbox grid for custom shapes.');
+      return;
+    }
+
     // function to take each checkbox as 1/0 and convert it all to a binary string
     // then it saves the string to the local storage along with its name as a custom shape
     function createCustomShape() {
+
+      // check if the image checkbox is checked
+      if (document.getElementById('imageCheckbox').checked) {
+        createCustomShapeFromImage();
+        return;
+      }
+
       var binaryString = "";
       var table = document.getElementById("checkboxHolder");
       // iterate through checkboxes and append to string
@@ -244,28 +299,18 @@
       refreshCustomShapes(); // refresh the shapes section to include the new shape
     }
 
-
-    // toggling custom shapes
-    function toggleCustomShapes() {
-      if (localStorage.getItem('customShapesEnabled') == 'true') {
-        localStorage.setItem('customShapesEnabled', 'false');
-        document.getElementById('customShapeConfigurator').style.cssText = 'display: none !important;';
-        document.getElementById('customShapeEnablerButton').textContent = 'Enable Custom Shapes';
-        document.getElementById('customShapeEnablerButton').classList.remove('btn-warning');
-        document.getElementById('customShapeEnablerButton').classList.add('btn-primary');
-        refreshCustomShapes();
-      } else {
-        if (!confirm("Enabling custom shapes will allow you to create your own shapes, but these have not been tested for ease-of-readability. Are you sure you want to enable custom shapes?")) {
-          return;
-        }
+    // event for custom shape checkbox
+    document.getElementById('customShapesSwitch').addEventListener('change', (e) => {
+      if (e.target.checked) {
         localStorage.setItem('customShapesEnabled', 'true');
-        document.getElementById('customShapeConfigurator').style.display = 'block';
-        document.getElementById('customShapeEnablerButton').textContent = 'Disable Custom Shapes';
-        document.getElementById('customShapeEnablerButton').classList.remove('btn-primary');
-        document.getElementById('customShapeEnablerButton').classList.add('btn-warning');
-        refreshCustomShapes(); 
+        document.getElementById('customShapeConfigurator').classList.remove('d-none');
+      } else {
+        localStorage.setItem('customShapesEnabled', 'false');
+        document.getElementById('customShapeConfigurator').classList.add('d-none');
       }
-    }
+    });
+
+    // check if the user has enabled 
 
     let serialPort;
     const connectButton = document.getElementById('connectButton');
