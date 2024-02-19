@@ -305,6 +305,10 @@
         document.getElementById('connectButton').disabled = true;
         document.getElementById('connectButton').textContent = 'Connected';
         document.getElementById('connectButton').className = 'btn btn-success';
+        // delay 2s
+        setTimeout(() => {
+          sendData("1111111110000001100000011000010110101001100100011000000111111111"); // symbol to show connection success
+        }, 2000);
       } catch (error) {
         console.error('Error connecting to serial port:', error);
         // document.getElementById('connection-status').textContent = 'Connection failed. Please try again.';
@@ -349,7 +353,7 @@
       }
       else if (isOperation == null) {
          alert("Error! Please enter a valid operation or number.")
-         return;
+         return; // exits to avoid errors in the next steps from invalid input
       }
 
       // give an error if number is not between -9999 and 99999\
@@ -364,7 +368,10 @@
 
       var processedNumString = "";
 
+      // establishes length of digits
       const numDigits = numString.length;
+
+      // establishes constant values for gaps between characters
       const gap = '0';
       const centerGap = '00000000'
 
@@ -378,7 +385,7 @@
          processedNumString = "N" + numString;
       }
 
-      console.log('Processed Number String:', processedNumString)
+      console.log('Processed Number String:', processedNumString);
 
       // add whitespace to the end of the processedNumString to make it a total of 6 characters long
       if (processedNumString.length < 6) {

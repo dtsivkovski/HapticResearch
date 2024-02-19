@@ -75,9 +75,9 @@
         document.getElementById('connectButton').disabled = true;
         document.getElementById('connectButton').textContent = 'Connected';
         document.getElementById('connectButton').className = 'btn btn-success';
-        // delay and send data
+        // delay 2s
         setTimeout(() => {
-          sendData("1111111110000001100000011000010110101001100100011000000111111111")
+          sendData("1111111110000001100000011000010110101001100100011000000111111111"); // symbol to show connection success
         }, 2000);
       } catch (error) {
         console.error('Error connecting to serial port:', error);
@@ -152,12 +152,14 @@
         '7': '111100',
         '8': '101100',
         '9': '011000',
-        'N': '010111',
-        'a': '010011', // addition
-        's': '000011', // subtraction
+        'N': '010111', // number sign for braille 
+         /* 
+          https://braillebug.org/braille/math-in-braille/ - reference for the following signs
+         */
+        '+': '010011', // addition
+        '-': '000011', // subtraction
         '*': '010000', // first sign for multiplication 
         'm': '100001', // second sign for multiplication
-         // https://braillebug.org/braille/math-in-braille/
          '/': '010001', // first sign for division
          'd': '010010', // second sign for division
          ' ': '000000'
@@ -173,7 +175,9 @@
 
       // generate a random operator (+, -, *)
       const operators = ['+', '-', '*', '/'];
-      const operator = operators[Math.floor(Math.random() * operators.length)];
+      const operator = operators[
+        Math.floor(Math.random() * operators.length) // generates number from 0-3
+      ];
 
       // generate numbers based on spacing and numerical limitations for each operator
       switch(operator) {
@@ -209,29 +213,32 @@
 
       // calculate the answer and build the numstring
       var numString = "";
-      numString += "N" + num1;
+      numString += "N" + num1; // N is in the dictionary as the number sign
       var htmlString = "What is ";
       htmlString += num1 + " " + operator + " " + num2 + " ? ";
       document.querySelector('#gamequestion').textContent = htmlString;
-
       var answer;
+
+      // build the string based on the operator
       switch (operator) {
-         case '+':
-            answer = num1 + num2;
-            numString += "a" + num2 + "  ";
-            break;
-         case '-':
-            answer = num1 - num2;
-            numString += "s" + num2 + "  ";
-            break;
-         case '*':
-            answer = num1 * num2;
-            numString += "*" + "m" + num2 + " ";
-            break;
-         case '/':
-            answer = num1 / num2;
-            numString += "/" + "d" + num2 + " ";
-            break;
+        // only one braille character for addition and subtraction
+        case '+':
+          answer = num1 + num2;
+          numString += "+" + num2 + "  ";
+          break;
+        case '-':
+          answer = num1 - num2;
+          numString += "-" + num2 + "  ";
+          break;
+        // division and multiplicaiton require two braille characters
+        case '*':
+          answer = num1 * num2;
+          numString += "*" + "m" + num2 + " ";
+          break;
+        case '/':
+          answer = num1 / num2;
+          numString += "/" + "d" + num2 + " ";
+          break;
       }
 
       console.log(numString);
@@ -286,32 +293,36 @@
     });
 
     function checkAnswer() {
+      // get user answer, correct answer is from the hidden div
       var userAnswer = document.querySelector('#answer').value;
       var correctAnswer = document.querySelector('#answerDiv').textContent;
+      // get divs for displaying scores and answer correct/incorrect
       const answerStatus = document.querySelector('#answerStatus');
       const pointTotalDiv = document.querySelector('#pointTotal');
       const streakDiv = document.querySelector('#streak');
       if (userAnswer == correctAnswer) {
-          answerStatus.textContent = 'Correct!';
-          answerStatus.className = 'text-success';
-          pointTotalDiv.textContent = 'Points: ' + ++pointTotal;
-          streakDiv.textContent = 'Streak: ' + ++streak;
+        // correct answer
+        answerStatus.textContent = 'Correct!';
+        answerStatus.className = 'text-success';
+        pointTotalDiv.textContent = 'Points: ' + ++pointTotal;
+        streakDiv.textContent = 'Streak: ' + ++streak;
       } else {
-          answerStatus.textContent = 'Incorrect. The correct answer is ' + correctAnswer;
-          answerStatus.className = 'text-danger';
-          streak = 0;
-          streakDiv.textContent = 'Streak: ' + streak;
+        // incorrect answer - gives feedback for the correct answer
+        answerStatus.textContent = 'Incorrect. The correct answer is ' + correctAnswer;
+        answerStatus.className = 'text-danger';
+        streak = 0;
+        streakDiv.textContent = 'Streak: ' + streak;
       }
-
+      
       setTimeout( () => {
         answerStatus.textContent = '';
-      }, 2000);
+      }, 4000);
 
+      // clear input field for next question
       document.querySelector('#answer').value = "";
 
+      // send the correct answer to the braille display to read
       answerString = "N" + correctAnswer + "     ";
-      console.log(answerString);
-
       sendNumber(answerString);
 
       // wait 4 seconds, then play again
