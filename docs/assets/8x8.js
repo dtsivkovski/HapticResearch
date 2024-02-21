@@ -1,5 +1,3 @@
-
-
 function getBinaryRepresentation(imgElement) {
     var originalSize = 24; // The size of the canvas and the image will be drawn onto
     var reducedSize = 8; // The size of the binary data grid
