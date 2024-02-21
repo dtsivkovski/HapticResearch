@@ -174,7 +174,7 @@
           </div>
         </div>
         <div class="d-flex justify-content-center text-center">
-          <input class="form-control w-25 text-center" type="text" id="customShapeName" placeholder="Shape Name">
+          <input class="form-control w-25 text-center btn-rounded" type="text" id="customShapeName" placeholder="Shape Name">
         </div>
         <div class="pt-2">
           <button class="btn btn-primary btn-rounded" onclick="createCustomShape()">Add Custom Shape to Library</button>
@@ -202,6 +202,20 @@
       document.getElementById('gridDiv').classList.add('d-none');
       document.getElementById('imageUploadDiv').classList.remove('d-none');
     }
+
+    // event listener for the number input text box for enter key down
+    document.getElementById('numberInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        sendNumber();
+      }
+    });
+
+    // event listener for the shape name input text box for enter key down
+    document.getElementById('customShapeName').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        createCustomShape();
+      }
+    });
 
     function refreshCustomShapes() {
       // display the custom shapes section if the user has enabled it
@@ -337,6 +351,16 @@
       if (!customShapeName) {
         alert('Please enter a name for the custom shape.');
         return;
+      }
+      else {
+        // iterate to prevent duplicate naming
+        const customShapes = JSON.parse(localStorage.getItem('customShapes')) || [];
+        for (const shape of customShapes) {
+          if (shape.name === customShapeName) { // if the name matches anything in localstorage
+            alert('There is already a shape with that name in the library, please enter a new name.');
+            return;
+          }
+        }
       }
       // get custom shapes lsit from local storage or create new
       const customShapes = JSON.parse(localStorage.getItem('customShapes')) || [];
