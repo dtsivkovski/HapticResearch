@@ -118,10 +118,17 @@
   </div>
   <div id="gamediv" class="pt-2 container justify-content-center text-center" style="display: none !important;">
       <div class="pt-2">
-         <h3 id="gamequestion">What is 0+0?</h3>
+         <h3 id="gamequestion">What is 1/1?</h3>
       </div>
       <div class="py-2 d-flex justify-content-center text-center">
-         <input type="number" id="answer" class="form-control w-50 text-center" placeholder="Enter your answer">
+        <div class="row">
+          <div class="col-6 d-flex justify-content-center text-center" id="numAnswerButtons">
+            <!-- answer buttons go here -->
+          </div>
+          <div class="col-6 d-flex justify-content-center text-center" id="denomAnswerButtons">
+            <!-- answer buttons go here -->
+          </div>
+        </div>
       </div>         
       <button class="btn btn-primary mx-1" onclick="checkAnswer()">Submit</button>
       <div id="answerDiv" style="display: none !important;"></div>
@@ -174,8 +181,10 @@
       const numWordBank = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
       const denomWordBank = ['ERROR', 'whole', 'half', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth'];
 
-      // make sure denominator isn't zero, numerator in the single digits
-      num1 = Math.floor(Math.random() * 10);
+      // make sure denominator and numerator aren't zero, numerator in the single digits
+      while (num1 == 0) {
+        num1 = Math.floor(Math.random() * 10);
+      }
       while (num2 == 0) {
         num2 = Math.floor(Math.random() * 13);
       }
@@ -190,6 +199,73 @@
 
       // get the correct numerator and 3 other random answers
       // then do the same for the denominator and 3 other random answers for 4-answer MCQ
+      var correctNumerator = numWordBank[num1];
+      var correctDenominator = denomWordBank[num2];
+      var correctDenominatorAdjusted = correctDenominator;
+      if (num1 == 1) {
+        correctDenominatorAdjusted += "s";
+      }
+
+      /* 
+        Randomize the answers for the numerator
+      */
+      var numeratorBank = [];
+      numeratorBank.push(correctNumerator);
+      while (numeratorBank.length < 4) {
+        var randNum = Math.floor((Math.random() * 9) + 1); // *9 + 1 in order to avoid zero/error
+        if (!numeratorBank.includes(numWordBank[randNum])) {
+          numeratorBank.push(numWordBank[randNum]);
+        }
+      }
+
+      /* 
+        Randomize the answers for the denominator
+      */
+      var denominatorBank = [];
+      denominatorBank.push(correctDenominatorAdjusted);
+      while (denominatorBank.length < 4) {
+        var randNum = Math.floor((Math.random() * 12) + 1); // *12 + 1 in order to avoid zero/error
+        if (!denominatorBank.includes(denomWordBank[randNum])) {
+          var denom = denomWordBank[randNum];
+          if (num1 == 1) {
+            denom += "s";
+          }
+          denominatorBank.push(denom);
+        }
+      }
+
+      // shuffle the arrays
+      numeratorBank = shuffle(numeratorBank);
+      denominatorBank = shuffle(denominatorBank);
+
+      // create buttons for each answer and add to the divs
+      var numButtonDiv = document.querySelector('#numAnswerButtons');
+      var denomButtonDiv = document.querySelector('#denomAnswerButtons');
+
+      numButtonDiv.innerHTML = "";
+      denomButtonDiv.innerHTML = "";
+
+      for (var i = 0; i < 4; i++) {
+        var numButton = document.createElement('button');
+        numButton.className = "btn btn-primary mx-1";
+        numButton.textContent = numeratorBank[i];
+        numButton.onclick = function() {
+          document.querySelector('#answerDiv').textContent = correctNumerator;
+          checkAnswer();
+        }
+        numButtonDiv.appendChild(numButton);
+
+        var denomButton = document.createElement('button');
+        denomButton.className = "btn btn-primary mx-1";
+        denomButton.textContent = denominatorBank[i];
+        denomButton.onclick = function() {
+          document.querySelector('#answerDiv').textContent = correctDenominatorAdjusted;
+          checkAnswer();
+        }
+        denomButtonDiv.appendChild(denomButton);
+      }
+
+
 
       console.log(numString);
 
@@ -199,14 +275,10 @@
 
     function sendNumber(numString) {
       
+      // initialize gaps and the string to be returned
       const gap = '0';
       const centerGap = '00000000'
-
-      // display the numbers and operator on the braille display 
-      // https://braillebug.org/braille/math-in-braille/
-
       var outputString = "";
-
 
       // row 1
       outputString = outputString + nDict[numString[0]].substring(0, 2) + gap + nDict[numString[1]].substring(0, 2) + gap + nDict[numString[2]].substring(0, 2);
@@ -276,6 +348,27 @@
       // wait 4 seconds, then play again
       setTimeout(playGame, 4000);
     }
+
+    /* 
+      Begin code referenced from GeeksForGeeks:
+      https://www.geeksforgeeks.org/how-to-shuffle-an-array-using-javascript/
+    */
+    function shuffle(array) {
+      for (var i = array.length - 1; i > 0; i--) { 
+      
+          // Generate random number 
+          var j = Math.floor(Math.random() * (i + 1));
+                      
+          var temp = array[i];
+          array[i] = array[j];
+          array[j] = temp;
+      }
+          
+      return array;
+    }
+    /*
+      End of referenced code
+    */
   </script>
   
 
