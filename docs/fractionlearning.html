@@ -227,7 +227,7 @@
         var randNum = Math.floor((Math.random() * 12) + 1); // *12 + 1 in order to avoid zero/error
         if (!denominatorBank.includes(denomWordBank[randNum])) {
           var denom = denomWordBank[randNum];
-          if (num1 == 1) {
+          if (num1 > 1) {
             denom += "s";
           }
           denominatorBank.push(denom);
