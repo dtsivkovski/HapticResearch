@@ -156,95 +156,42 @@
          /* 
           https://braillebug.org/braille/math-in-braille/ - reference for the following signs
          */
-        '+': '010011', // addition
-        '-': '000011', // subtraction
-        '*': '010000', // first sign for multiplication 
-        'm': '100001', // second sign for multiplication
-         '/': '010001', // first sign for division
-         'd': '010010', // second sign for division
-         ' ': '000000', // space
-         '|': '101101', // vertical bar
+        'o': '110101', // opening fraction indicator
+        '/': '010010', // slash
+        'c': '010111', // closing fraction indicator
+        ' ': '000000', // space
+        '|': '101101', // vertical bar
     }
 
     function playGame() {
 
       document.querySelector('#gamediv').style = "display: block !important";
       document.querySelector('#sgButton').innerHTML = "Next Question";
-      // generate two numbers between 0 and 9
+      // generate numbers 
       var num1 = 0;
       var num2 = 0;
 
-      // generate a random operator (+, -, *)
-      const operators = ['+', '-', '*', '/'];
-      const operator = operators[
-        Math.floor(Math.random() * operators.length) // generates number from 0-3
-      ];
+      const numWordBank = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+      const denomWordBank = ['ERROR', 'whole', 'half', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth'];
 
-      // generate numbers based on spacing and numerical limitations for each operator
-      switch(operator) {
-        case '/':
-          // if division is the operator, make sure the numbers are divisible without remainder
-          while (num1 % num2 != 0) {
-            num1 = Math.floor(Math.random() * 100);
-            num2 = Math.floor(Math.random() * 10);
-          }
-          break
-        case '*':
-          // allow up to 99 for multiplication
-          num1 = Math.floor(Math.random() * 100);
-          num2 = Math.floor(Math.random() * 10);
-          // set upper limit at 100
-          while (num1 * num2 > 100) {
-            num1 = Math.floor(Math.random() * 100);
-            num2 = Math.floor(Math.random() * 10);
-          }
-          break
-        case '-':
-        case '+':
-          // allow up to 99 for addition and subtraction
-          num1 = Math.floor(Math.random() * 100);
-          num2 = Math.floor(Math.random() * 100);
-          // set upper limit at 100
-          while (num1 + num2 > 100) {
-            num1 = Math.floor(Math.random() * 100);
-            num2 = Math.floor(Math.random() * 100);
-          }
-          break
+      // make sure denominator isn't zero, numerator in the single digits
+      num1 = Math.floor(Math.random() * 10);
+      while (num2 == 0) {
+        num2 = Math.floor(Math.random() * 13);
       }
 
       // calculate the answer and build the numstring
       var numString = "";
-      numString += "N" + num1; // N is in the dictionary as the number sign
-      var htmlString = "What is ";
-      htmlString += num1 + " " + operator + " " + num2 + " ? ";
+      numString += "o" + num1 + "/" + num2 + "c" + "  "; // build the fraction for output
+      var htmlString = "How do you say ";
+      htmlString += num1 + "/" + num2 + " ? ";
       document.querySelector('#gamequestion').textContent = htmlString;
       var answer;
 
-      // build the string based on the operator
-      switch (operator) {
-        // only one braille character for addition and subtraction
-        case '+':
-          answer = num1 + num2;
-          numString += "+" + num2 + "  ";
-          break;
-        case '-':
-          answer = num1 - num2;
-          numString += "-" + num2 + "  ";
-          break;
-        // division and multiplicaiton require two braille characters
-        case '*':
-          answer = num1 * num2;
-          numString += "*" + "m" + num2 + " ";
-          break;
-        case '/':
-          answer = num1 / num2;
-          numString += "/" + "d" + num2 + " ";
-          break;
-      }
+      // get the correct numerator and 3 other random answers
+      // then do the same for the denominator and 3 other random answers for 4-answer MCQ
 
       console.log(numString);
-
-      document.querySelector('#answerDiv').textContent = answer;
 
       sendNumber(numString);
 
