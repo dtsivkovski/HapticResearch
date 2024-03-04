@@ -1,0 +1,38 @@
+
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #000;
+  }
+  .sticky h1 {
+    color: rgb(166, 195, 241);
+  }
+
+  .btn {
+    transform: translate(0,0);
+    transition: transform 0.3s;
+  }
+  .btn-rounded {
+    border-radius: 20px;
+  }
+  .btn:hover {
+    transform: translate(0,-2px);
+    transition: transform 0.3s;
+  }
+  body {
+    font-family: 'Assistant', sans-serif;
+  }
+  .btn-overridehover:hover {
+    transform: translate(0,0) !important;
+    transition: transform 0.3s;
+  }
+  .rounded-right {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+  .rounded-left {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
