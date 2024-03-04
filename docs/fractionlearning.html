@@ -12,6 +12,22 @@
   <link rel="icon" href="appicon.ico">
   <link rel="stylesheet" href="assets/mstyle.css" type="text/css">
 </head>
+<script>
+  // set tts help text
+  const ttsHelpMessage = `Instructions. Read the fraction on the braille display.
+  Select the correct answer from the multiple choice options.
+  Use tab or shift and tab to navigate between the numerator category, denominator category, and submit button.
+  Use arrow keys to navigate between the multiple choice options in each category.
+  Press space to select and submit.`;
+
+document.addEventListener('keydown', function(event) {
+    // if 'H' is pressed, speak help message
+    if (event.key === 'h' || event.key === 'H') {
+        speak(ttsHelpMessage);
+    }
+});
+
+</script>
 <body class="bg-dark text-light">
   <style>
     .sticky {
@@ -123,7 +139,15 @@
     }
   </script>
 
-  <div class="pt-2">
+  <div class="d-flex pt-3 justify-content-center text-center px-5" id="instructions">
+    Read the fraction on the braille display.<br/>
+    Select the correct answer from the multiple choice options. <br/>
+    Use tab or shift+tab to navigate between the numerator category, denominator category, and submit button. <br/>
+    Use arrow keys to navigate between the multiple choice options in each category. <br/>
+    Press space to select and submit.
+  </div>
+
+  <div class="pt-3">
     <button class="btn btn-rounded btn-primary mx-1" onclick="playGame()" id="sgButton">Start Game</button>
   </div>
   <div id="gamediv" class="pt-2 container justify-content-center text-center" style="display: none !important;">
@@ -184,6 +208,7 @@
     function playGame() {
 
       document.querySelector('#gamediv').style = "display: block !important";
+      document.querySelector('#instructions').style = "display: none !important";
       document.querySelector('#sgButton').innerHTML = "Skip Question";
       // generate numbers 
       var num1 = 0;
@@ -372,18 +397,13 @@
     }
 
     // check for enter key press when submitting answer
-    document.querySelector('body').addEventListener('keyup', function(event) {
-      if (event.key === 'Enter') {
-        checkAnswer();
-      }
-    });
 
     document.querySelector('#checkAnswerButton').addEventListener('click', checkAnswer);
     document.querySelector('#checkAnswerButton').addEventListener('focus', function() {
       speak('You selected ' + document.querySelector('input[name="numAnswerRadios"]:checked').value 
                           + " " 
                           + document.querySelector('input[name="denomAnswerRadios"]:checked').value
-                          + ". Press enter to submit.");
+                          + ". Press space to submit.");
     });
 
     function checkAnswer() {
@@ -417,7 +437,7 @@
       // reset after 4 seconds
       setTimeout( () => {
         answerStatus.textContent = '';
-        document.querySelector('#checkAnswerButton').classList.add('enabled');
+        document.querySelector('#checkAnswerButton').classList.remove('disabled');
       }, 4000);
 
       // wait 4 seconds, then play again
