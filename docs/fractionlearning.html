@@ -43,6 +43,7 @@
       <button class="btn btn-rounded btn-primary mx-1" id="connectButton">Connect to Arduino</button>
       <button class="btn btn-rounded btn-danger mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
       <button class="btn btn-rounded btn-primary mx-1" onclick="toggleSticky()" id="stickyButton"><i class="fa-solid fa-thumbtack"></i></button>
+      <button class="btn btn-rounded btn-warning mx-1" id="tts-toggler">TTS Toggler</button>
     </div>
   </div>
 
@@ -66,6 +67,8 @@
       }
     }
   </script>
+
+  <script src="assets/tts.js"></script>
 
   <script>
     let serialPort;
@@ -137,7 +140,7 @@
           </div>
         </div>
       </div>         
-      <button class="btn btn-rounded btn-primary mx-1" onclick="checkAnswer()">Submit</button>
+      <button class="btn btn-rounded btn-primary mx-1" id="checkAnswerButton">Submit</button>
       <div class="pt-2">
         <h3 id="answerStatus"></h3>
       </div>
@@ -212,7 +215,7 @@
       var correctDenominator = denomWordBank[num2];
       var correctDenominatorAdjusted = correctDenominator;
       var adjustmentString = "";
-      if (num1 >= 1) {
+      if (num1 > 1) {
         correctDenominatorAdjusted += "s";
         adjustmentString = "s";
       }
@@ -291,6 +294,11 @@
         numLabel.htmlFor = numeratorBank[i];
         numLabel.textContent = numeratorBank[i];
 
+        // add event listener for focus
+        numRadio.addEventListener('focus', function() {
+          speak(this.value);
+        });
+
         // append the radio and label to the div
         numForm.appendChild(numRadio);
         numForm.appendChild(numLabel);
@@ -311,6 +319,11 @@
         denomLabel.className = "form-check-label";
         denomLabel.htmlFor = denominatorBank[i];
         denomLabel.textContent = denominatorBank[i];
+
+        // add event listener for focus
+        denomRadio.addEventListener('focus', function() {
+          speak(this.value);
+        });
 
         // denominator appending
         denomForm.appendChild(denomRadio);
@@ -365,7 +378,16 @@
       }
     });
 
+    document.querySelector('#checkAnswerButton').addEventListener('click', checkAnswer);
+    document.querySelector('#checkAnswerButton').addEventListener('focus', function() {
+      speak('You selected ' + document.querySelector('input[name="numAnswerRadios"]:checked').value 
+                          + " " 
+                          + document.querySelector('input[name="denomAnswerRadios"]:checked').value
+                          + ". Press enter to submit.");
+    });
+
     function checkAnswer() {
+      document.querySelector('#checkAnswerButton').classList.add('disabled');
       // get user answer, correct answer is from the hidden div
       var userAnswer = document.querySelector('input[name="numAnswerRadios"]:checked').value 
                         + " " 
@@ -380,6 +402,10 @@
         answerStatus.className = 'text-success';
         pointTotalDiv.textContent = 'Points: ' + ++pointTotal;
         streakDiv.textContent = 'Streak: ' + ++streak;
+        speak("Correct! " + "You have " + pointTotal + " points.");
+        if (streak % 5 == 0) {
+          speak("Wow! " + streak + " in a row! Keep it up!");
+        }
       } else {
         // incorrect answer - gives feedback for the correct answer
         answerStatus.textContent = 'Incorrect. The correct answer is ' + correctAnswer;
@@ -391,6 +417,7 @@
       // reset after 4 seconds
       setTimeout( () => {
         answerStatus.textContent = '';
+        document.querySelector('#checkAnswerButton').classList.add('enabled');
       }, 4000);
 
       // wait 4 seconds, then play again
