@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Braille Display - Home</title>
+  <meta charset="utf-8">
+  <!-- import bootstrap 5.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/b33dd8950a.js" crossorigin="anonymous"></script><link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap" rel="stylesheet">
+  <link rel="icon" href="appicon.ico">
+</head>
+<body class="bg-dark text-light">
+    <style>
+    .sticky {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        border-bottom: 1px solid #000;
+    }
+
+    .btn {
+        transform: translate(0,0);
+        transition: transform 0.3s;
+    }
+    .btn:hover {
+        transform: translate(0,-2px);
+        transition: transform 0.3s;
+    }
+    body {
+        font-family: 'Assistant', sans-serif;
+    }
+    .main-link {
+        color: #868686;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+    }
+    .main-link:hover {
+        color: #ffffff;
+        text-decoration: none;
+        transform: scale(1.1) !important;
+    }
+    </style>
+    <div class="jumbotron" style="justify-content: center; text-align: center;">
+        <h1 class="display-2 pt-5">Braille Display</h1>
+        <p class="lead">A web application to display braille characters on the braille display.</p>
+        <hr class="my-4">
+        <a class="display-5 main-link" href="controller.html" title="Shape and Number Controller">Shape and Number Controller</a>
+        <br/>
+        <a class="display-5 main-link" href="game.html" title="Basic Math Game">Basic Math Game</a>
+        <br/>
+        <a class="display-5 main-link" href="fractionlearning.html" title="Fraction Game">Fraction Game</a>
+    </div>
