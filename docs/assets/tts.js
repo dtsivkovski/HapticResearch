@@ -21,6 +21,7 @@ if (document.getElementById('tts-toggler')) {
         if (ttsEnabled) {
             document.getElementById('tts-toggler').innerHTML = '<i class="fa-solid fa-volume-high"></i>';
             document.getElementById('tts-toggler').title = 'Text to Speech is enabled';
+            speak("Text to speech is enabled.");
         } else {
             document.getElementById('tts-toggler').innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
             document.getElementById('tts-toggler').title = 'Text to Speech is disabled';
