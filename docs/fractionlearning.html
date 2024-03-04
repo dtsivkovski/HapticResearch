@@ -35,7 +35,7 @@
   </style>
   <div class="jumbotron" style="justify-content: center; text-align: center;">
   <div class="bg-dark pb-4" id="stickyHeader">
-    <h1 class="pt-4">Braille Display Controller</h1>
+    <h1 class="pt-4">Fraction Game</h1>
     <h3 id="connection-status"></h3>
     <div class="pt-2">
       <button class="btn btn-primary mx-1" onclick="location.href='index.html'"><i class="fa-solid fa-house"></i></button>
@@ -166,7 +166,7 @@
         '9': '011000',
         'N': '010111', // number sign for braille 
          /* 
-          https://braillebug.org/braille/math-in-braille/ - reference for the following signs
+            https://nemeth.aphtech.org/lesson3.4 - reference for the following characters
          */
         'o': '110101', // opening fraction indicator
         '/': '010010', // slash
@@ -292,6 +292,7 @@
         // same thing but for denominator answer radios
         var denomForm = document.createElement('div');
         denomForm.className = "form-check";
+        // creating the radio input
         var denomRadio = document.createElement('input');
         denomRadio.className = "form-check-input";
         denomRadio.type = "radio";
@@ -299,6 +300,7 @@
         denomRadio.id = denominatorBank[i];
         denomRadio.value = denominatorBank[i];
         var denomLabel = document.createElement('label');
+        // creating the label
         denomLabel.className = "form-check-label";
         denomLabel.htmlFor = denominatorBank[i];
         denomLabel.textContent = denominatorBank[i];
@@ -379,11 +381,10 @@
         streakDiv.textContent = 'Streak: ' + streak;
       }
       
+      // reset after 4 seconds
       setTimeout( () => {
         answerStatus.textContent = '';
       }, 4000);
-
-      // send the correct answer to the braille display to read
 
       // wait 4 seconds, then play again
       setTimeout(playGame, 4000);
