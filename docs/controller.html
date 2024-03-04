@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap" rel="stylesheet">
   <link rel="icon" href="appicon.ico">
+  <!-- import 8x8.js from assets folder -->
+  <script src="assets/8x8.js"></script>
 </head>
 <body class="bg-dark text-light">
   <style>
@@ -19,11 +21,18 @@
       top: 0;
       z-index: 1000;
       border-bottom: 1px solid #000;
+      background-color: #0f1d2a !important;
+    }
+    .sticky h1 {
+      color: rgb(166, 195, 241);
     }
 
     .btn {
       transform: translate(0,0);
       transition: transform 0.3s;
+    }
+    .btn-rounded {
+      border-radius: 20px;
     }
     .btn:hover {
       transform: translate(0,-2px);
@@ -32,16 +41,28 @@
     body {
       font-family: 'Assistant', sans-serif;
     }
+    .btn-overridehover:hover {
+      transform: translate(0,0) !important;
+      transition: transform 0.3s;
+    }
+    .rounded-right {
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+    .rounded-left {
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+    }
   </style>
   <div class="jumbotron" style="justify-content: center; text-align: center;">
   <div class="bg-dark pb-4" id="stickyHeader">
     <h1 class="pt-4">Shape and Number Controller</h1>
     <h3 id="connection-status"></h3>
     <div class="pt-2">
-      <button class="btn btn-primary mx-1" onclick="location.href='index.html'"><i class="fa-solid fa-house"></i></button>
-      <button class="btn btn-primary mx-1" id="connectButton">Connect to Arduino</button>
-      <button class="btn btn-danger mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
-      <button class="btn btn-primary mx-1" onclick="toggleSticky()" id="stickyButton"><i class="fa-solid fa-thumbtack"></i></button>
+      <button class="btn btn-primary btn-rounded mx-1" onclick="location.href='index.html'"><i class="fa-solid fa-house"></i></button>
+      <button class="btn btn-primary btn-rounded mx-1" id="connectButton">Connect to Arduino</button>
+      <button class="btn btn-danger btn-rounded mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
+      <button class="btn btn-primary btn-rounded mx-1" onclick="toggleSticky()" title="Pin to top" id="stickyButton"><i class="fa-solid fa-thumbtack"></i></button>
     </div>
   </div>
 
@@ -50,6 +71,7 @@
     if (localStorage.getItem('stickyEnabled') == 'true') {
       document.getElementById('stickyHeader').classList.add('sticky');
       document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      document.getElementById('stickyButton').title = 'Unpin from top';
     }
 
     function toggleSticky() {
@@ -58,36 +80,40 @@
         localStorage.setItem('stickyEnabled', 'false');
         stickyHeader.classList.remove('sticky');
         document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+        document.getElementById('stickyButton').title = 'Pin to top';
       } else {
         localStorage.setItem('stickyEnabled', 'true');
         stickyHeader.classList.add('sticky');
         document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+        document.getElementById('stickyButton').title = 'Unpin from top';
       }
     }
   </script>
-
-  <div class="pt-2">
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('0001100001100110010000101000000110000001010000100110011000011000')">
+  <div class="pt-4">
+    <h2>Shape Sender</h2>
+  </div>
+  <div class="pt-1">
+    <button class="btn btn-primary btn-rounded p-3 m-1" onclick="sendData('0001100001100110010000101000000110000001010000100110011000011000')">
       <p>Send Circle</p>
       <i class="fa-regular fa-circle fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('0000000001111110010000100100001001000010010000100111111000000000')">
+    <button class="btn btn-primary btn-rounded p-3 m-1" onclick="sendData('0000000001111110010000100100001001000010010000100111111000000000')">
       <p>Send Square</p>
       <i class="fa-regular fa-square fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('0000000000000000000100000010100001000100111111100000000000000000')">
+    <button class="btn btn-primary btn-rounded p-3 m-1" onclick="sendData('0000000000000000000100000010100001000100111111100000000000000000')">
       <p>Send Triangle</p>
       <i class="fa-solid fa-caret-up fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('0000000001101100100100101000001001000100001010000001000000000000')">
+    <button class="btn btn-primary btn-rounded p-3 m-1" onclick="sendData('0000000001101100100100101000001001000100001010000001000000000000')">
       <p>Send Heart</p>
       <i class="fa-solid fa-heart fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('1000001001000100001010000001000000101000010001001000001000000000')">
+    <button class="btn btn-primary btn-rounded p-3 m-1" onclick="sendData('1000001001000100001010000001000000101000010001001000001000000000')">
       <p>Send X-Cross</p>
       <i class="fa-solid fa-times fa-3x"></i>
     </button>
-    <button class="btn btn-primary p-3 m-1" onclick="sendData('0001000000010000000100001111111000010000000100000001000000000000')">
+    <button class="btn btn-primary btn-rounded p-3 m-1" onclick="sendData('0001000000010000000100001111111000010000000100000001000000000000')">
       <p>Send Plus-Cross</p>
       <i class="fa-solid fa-plus fa-3x"></i>
     </button>
@@ -97,17 +123,20 @@
      <h2>Number Sender</h2>
      <p>Enter a number (From -9999 to 99999) or a one-step operation (2+10) to send to the arduino.</p>
      <div class="input-group m-3">
-       <input class="form-control" type="text" id="numberInput" min="0" max="99999" placeholder="0">
+       <input class="form-control rounded-left" type="text" id="numberInput" min="0" max="99999" placeholder="0">
        <div class="input-group-append">
-         <button class="btn btn-primary" onclick="sendNumber()">Send Number</button>
+         <button class="btn btn-primary rounded-right btn-overridehover" onclick="sendNumber()">Send Number</button>
        </div>
      </div>
    </div>
    </div>
    <div class="d-flex justify-content-center py-4">
-    <button class="btn btn-primary" onclick="toggleCustomShapes()" id="customShapeEnablerButton">Enable Custom Shapes</button>
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="customShapesSwitch">
+      <label class="form-check-label text-warning" for="customShapesSwitch">Enable Custom Shapes</label>
+    </div>
    </div>
-   <div class="d-flex justify-content-center py-4" style="display: none !important;" id="customShapeConfigurator">
+   <div class="d-flex justify-content-center py-4 d-none" style="border-top: #000 1px solid;" id="customShapeConfigurator">
      <div class="p-2 w-75">
       <div class="d-flex justify-content-center pb-1">
         <h2>Custom Shape Library</h2>
@@ -116,7 +145,14 @@
       </div>
        <h2>Create a Custom Shape</h2>
         <p>Click on the cells to create a custom shape, then click the button below to save it to your custom shape library.</p>
-        <div class="pt-1 d-flex justify-content-center align-items-center"> 
+        <br/>
+        <div class="d-flex justify-content-center align-items-center">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="imageCheckbox">
+            <label class="form-check-label" for="imageCheckbox">Create from image</label>
+          </div>
+        </div>
+        <div class="pt-1 d-flex justify-content-center align-items-center" id="gridDiv"> 
               <div class="bg-light p-2 mb-3" style="border-radius: 20px">
                 <table id="checkboxHolder" class="grid bg-white">
                 </table>
@@ -141,24 +177,63 @@
                 }
             </script>
         </div>
+        <div class="pt-1 d-flex d-none justify-content-center align-items-center" id="imageUploadDiv">
+          <div class="bg-light p-3 mb-3 justify-content-center align-items-center" style="border-radius: 20px">
+            <input class="form-control bg-dark text-light" type="file" id="imageUpload" accept="image/*">
+          </div>
+        </div>
         <div class="d-flex justify-content-center text-center">
-          <input class="form-control w-25 text-center" type="text" id="customShapeName" placeholder="Shape Name">
+          <input class="form-control w-25 text-center btn-rounded" type="text" id="customShapeName" placeholder="Shape Name">
+        </div>
+        <div class="d-flex justify-content-center pt-2">
+          <img id="uploadedImage" class="img-fluid d-none" src="" alt="Uploaded Image">
         </div>
         <div class="pt-2">
-          <button class="btn btn-primary" onclick="createCustomShape()">Add Custom Shape to Library</button>
+          <button class="btn btn-primary btn-rounded" onclick="createCustomShape()">Add Custom Shape to Library</button>
         </div>
       </div>
     </div>
   
   <script>
 
+    document.querySelector('#imageCheckbox').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        document.getElementById('gridDiv').classList.add('d-none');
+        document.getElementById('imageUploadDiv').classList.remove('d-none');
+        localStorage.setItem('imageCheckboxEnabled', 'true');
+      } else {
+        document.getElementById('gridDiv').classList.remove('d-none');
+        document.getElementById('imageUploadDiv').classList.add('d-none');
+        localStorage.setItem('imageCheckboxEnabled', 'false');
+      }
+    });
+
+    // check the checkbox if the user has enabled it before
+    if (localStorage.getItem('imageCheckboxEnabled') == 'true') {
+      document.getElementById('imageCheckbox').checked = true;
+      document.getElementById('gridDiv').classList.add('d-none');
+      document.getElementById('imageUploadDiv').classList.remove('d-none');
+    }
+
+    // event listener for the number input text box for enter key down
+    document.getElementById('numberInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        sendNumber();
+      }
+    });
+
+    // event listener for the shape name input text box for enter key down
+    document.getElementById('customShapeName').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        createCustomShape();
+      }
+    });
+
     function refreshCustomShapes() {
       // display the custom shapes section if the user has enabled it
       if (localStorage.getItem('customShapesEnabled') == 'true') {
-        document.getElementById('customShapeConfigurator').style.display = 'block';
-        document.getElementById('customShapeEnablerButton').textContent = 'Disable Custom Shapes';
-        document.getElementById('customShapeEnablerButton').classList.remove('btn-primary');
-        document.getElementById('customShapeEnablerButton').classList.add('btn-warning');
+        document.getElementById('customShapeConfigurator').classList.remove('d-none');
+        document.getElementById('customShapesSwitch').checked = true;
 
         // get all shapes from local storage and display them in the custom shapes section
         const customShapes = JSON.parse(localStorage.getItem('customShapes'));
@@ -166,17 +241,18 @@
           // iterate through all, create table to hold each custom shape
           // rows include the name of the shape, a send button, and a delete button
           const customShapeLibrary = document.getElementById('customShapeLibrary');
+          customShapeLibrary.className = 'd-flex justify-content-center align-items-center';
           // clear the library in case it was already populated
           customShapeLibrary.innerHTML = '';
 
           const table = document.createElement('table');
-          table.className = 'table table-dark rounded border-white';
+          table.className = 'table table-dark rounded border-white w-50';
           table.innerHTML = `
             <thead>
               <tr>
                 <th scope="col">Name</th>
-                <th scope="col">Send</th>
-                <th scope="col">Delete</th>
+                <th scope="col" class="col-1">Send</th>
+                <th scope="col" class="col-1">Delete</th>
               </tr>
             </thead>
           `;
@@ -190,17 +266,22 @@
             // send button
             const sendCell = document.createElement('td');
             const sendButton = document.createElement('button');
-            sendButton.className = 'btn btn-primary m-1 bg-primary';
+            sendButton.className = 'btn btn-primary m-1 bg-primary btn-rounded';
             sendButton.textContent = 'Send';
             sendButton.onclick = () => sendData(shape.data);
             sendCell.appendChild(sendButton);
             // delete button
             const deleteCell = document.createElement('td');
             const deleteButton = document.createElement('button');
-            deleteButton.className = 'btn btn-danger m-1 bg-danger';
+            deleteButton.className = 'btn btn-danger m-1 bg-danger btn-rounded';
             deleteButton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
             // delete the shape from local storage, refresh shapes section
             deleteButton.onclick = () => {
+              // confirm if user wants to delete shape
+              if (!confirm(`Are you sure you want to delete the shape "${shape.name}"?`)) {
+                return;
+              }
+              // delete shape from local storage and from table
               const customShapes = JSON.parse(localStorage.getItem('customShapes'));
               const newShapes = customShapes.filter(s => s.name !== shape.name);
               localStorage.setItem('customShapes', JSON.stringify(newShapes));
@@ -221,9 +302,49 @@
 
     refreshCustomShapes();
 
-    // function to take each checkbox as 1/0 and convert it all to a binary string
-    // then it saves the string to the local storage along with its name as a custom shape
-    function createCustomShape() {
+    function customShapeFromImage() {
+      const uploadedImage = document.getElementById('uploadedImage');
+      // file input for image
+      const fileInput = document.getElementById('imageUpload');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert('Please select an image to create a custom shape.');
+        return;
+      }
+
+      // create an html image element for the file
+
+      var reader = new FileReader();
+      reader.onload = function (e) {
+          uploadedImage.src = e.target.result; // Display uploaded image
+          processAndDisplayBinary(e.target.result); // Process and display binary
+      };
+      reader.readAsDataURL(file);
+
+      const binaryString = tempBinaryRepresentation;
+
+      console.log(binaryString);
+
+      tempBinaryRepresentation = "";
+
+      return binaryString;
+    }
+
+
+    var tempBinaryRepresentation = "";
+
+    function processAndDisplayBinary(dataURL) {
+        var img = new Image();
+        img.onload = function() {
+            var binaryRepresentation = getBinaryRepresentation(img);
+            tempBinaryRepresentation = binaryRepresentation;
+            console.log("Success: " + binaryRepresentation); // Display binary text
+        };
+        img.src = dataURL;
+    }
+
+    function customShapeFromCheckbox() {
+
       var binaryString = "";
       var table = document.getElementById("checkboxHolder");
       // iterate through checkboxes and append to string
@@ -237,11 +358,44 @@
               }
           }
       }
+
+      return binaryString;
+    }
+
+    // function to take each checkbox as 1/0 and convert it all to a binary string
+    // then it saves the string to the local storage along with its name as a custom shape
+    function createCustomShape() {
+
+      var binaryString = "";
+
+      // check if the image checkbox is checked
+      if (document.getElementById('imageCheckbox').checked) {
+        binaryString = customShapeFromImage();
+      }
+      else {
+        binaryString = customShapeFromCheckbox();
+      }
+
+      // check if binary string is missing
+      if (!binaryString) {
+          return;
+        }
+
       // check name of shape
       const customShapeName = document.getElementById('customShapeName').value;
       if (!customShapeName) {
         alert('Please enter a name for the custom shape.');
         return;
+      }
+      else {
+        // iterate to prevent duplicate naming
+        const customShapes = JSON.parse(localStorage.getItem('customShapes')) || [];
+        for (const shape of customShapes) {
+          if (shape.name === customShapeName) { // if the name matches anything in localstorage
+            alert('There is already a shape with that name in the library, please enter a new name.');
+            return;
+          }
+        }
       }
       // get custom shapes lsit from local storage or create new
       const customShapes = JSON.parse(localStorage.getItem('customShapes')) || [];
@@ -250,28 +404,18 @@
       refreshCustomShapes(); // refresh the shapes section to include the new shape
     }
 
-
-    // toggling custom shapes
-    function toggleCustomShapes() {
-      if (localStorage.getItem('customShapesEnabled') == 'true') {
-        localStorage.setItem('customShapesEnabled', 'false');
-        document.getElementById('customShapeConfigurator').style.cssText = 'display: none !important;';
-        document.getElementById('customShapeEnablerButton').textContent = 'Enable Custom Shapes';
-        document.getElementById('customShapeEnablerButton').classList.remove('btn-warning');
-        document.getElementById('customShapeEnablerButton').classList.add('btn-primary');
-        refreshCustomShapes();
-      } else {
-        if (!confirm("Enabling custom shapes will allow you to create your own shapes, but these have not been tested for ease-of-readability. Are you sure you want to enable custom shapes?")) {
-          return;
-        }
+    // event for custom shape checkbox
+    document.getElementById('customShapesSwitch').addEventListener('change', (e) => {
+      if (e.target.checked) {
         localStorage.setItem('customShapesEnabled', 'true');
-        document.getElementById('customShapeConfigurator').style.display = 'block';
-        document.getElementById('customShapeEnablerButton').textContent = 'Disable Custom Shapes';
-        document.getElementById('customShapeEnablerButton').classList.remove('btn-primary');
-        document.getElementById('customShapeEnablerButton').classList.add('btn-warning');
-        refreshCustomShapes(); 
+        document.getElementById('customShapeConfigurator').classList.remove('d-none');
+      } else {
+        localStorage.setItem('customShapesEnabled', 'false');
+        document.getElementById('customShapeConfigurator').classList.add('d-none');
       }
-    }
+    });
+
+    // check if the user has enabled 
 
     let serialPort;
     const connectButton = document.getElementById('connectButton');
@@ -310,7 +454,7 @@
         // document.getElementById('connection-status').className = 'text-success';
         document.getElementById('connectButton').disabled = true;
         document.getElementById('connectButton').textContent = 'Connected';
-        document.getElementById('connectButton').className = 'btn btn-success';
+        document.getElementById('connectButton').className = 'btn btn-success btn-rounded';
         // delay 2s
         setTimeout(() => {
           sendData("1111111110000001100000011000010110101001100100011000000111111111"); // symbol to show connection success
@@ -552,9 +696,7 @@
       } else {
         // custom fade out effect
         toTopButton.style.opacity = "0";
-        delay(300).then(() => {
-            toTopButton.style.zIndex = "-1";
-        });
+        toTopButton.style.zIndex = "-1";
       }
     }
 
