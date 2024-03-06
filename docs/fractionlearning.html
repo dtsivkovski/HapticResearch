@@ -58,7 +58,7 @@ document.addEventListener('keydown', function(event) {
       <button class="btn btn-rounded btn-primary mx-1" onclick="location.href='index.html'" title="Home Page"><i class="fa-solid fa-house"></i></button>
       <button class="btn btn-rounded btn-primary mx-1" id="connectButton">Connect to Arduino</button>
       <button class="btn btn-rounded btn-danger mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button>
-      <button class="btn btn-rounded btn-primary mx-1" onclick="toggleSticky()" id="stickyButton"><i class="fa-solid fa-thumbtack"></i></button>
+      <button class="btn btn-rounded btn-primary mx-1" onclick="toggleSticky()" id="stickyButton" title="Pin tools"><i class="fa-solid fa-thumbtack"></i></button>
       <button class="btn btn-rounded btn-warning mx-1" id="tts-toggler">TTS Toggler</button>
     </div>
   </div>
@@ -68,6 +68,7 @@ document.addEventListener('keydown', function(event) {
     if (localStorage.getItem('stickyEnabled') == 'true') {
       document.getElementById('stickyHeader').classList.add('sticky');
       document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      document.getElementById('stickyButton').title = 'Unpin tools';
     }
 
     function toggleSticky() {
@@ -76,10 +77,12 @@ document.addEventListener('keydown', function(event) {
         localStorage.setItem('stickyEnabled', 'false');
         stickyHeader.classList.remove('sticky');
         document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+        document.getElementById('stickyButton').title = 'Pin tools to top';
       } else {
         localStorage.setItem('stickyEnabled', 'true');
         stickyHeader.classList.add('sticky');
         document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      document.getElementById('stickyButton').title = 'Unpin tools';
       }
     }
   </script>
