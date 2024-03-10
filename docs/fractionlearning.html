@@ -16,9 +16,7 @@
   // set tts help text
   const ttsHelpMessage = `Instructions. Read the fraction on the braille display.
   Select the correct answer from the multiple choice options.
-  Use tab or shift and tab to navigate between the numerator category, denominator category, and submit button.
-  Use arrow keys to navigate between the multiple choice options in each category.
-  Press space to select and submit.`;
+  Use j to navigate forwards, f to navigate backwards, and space to select.`;
 
 </script>
 <body class="bg-dark text-light">
@@ -176,7 +174,7 @@
 
     // establish navigation for the screen
     // J is for tabbing forward, F is for tabbing backwards, and space is for selecting
-    const navigatableElements = ['sgButton', 'gamequestion',
+    const navigatableElements = ['sgButton', 
                                 'numAnswer_0', 'numAnswer_1', 'numAnswer_2', 'numAnswer_3', 
                                 'denomAnswer_0', 'denomAnswer_1', 'denomAnswer_2', 'denomAnswer_3', 
                                 'checkAnswerButton'];
@@ -232,6 +230,9 @@
       else if (event.key === 'H' || event.key === 'h') {
         speak(ttsHelpMessage);
       }
+      else if (event.key === 'C' || event.key === 'c') {
+        connectButton.click(); // try to open connection menu
+      }
     });
 
   </script>
@@ -269,9 +270,6 @@
     document.querySelector('#sgButton').addEventListener('focus', function() {
       speak(this.value);
     });
-    document.querySelector('#gamequestion').addEventListener('focus', function() {
-      speak(this.textContent);
-    });
 
 
     function playGame() {
@@ -279,7 +277,9 @@
       document.querySelector('#gamediv').style = "display: block !important";
       document.querySelector('#sgButton').innerHTML = "Skip Question";
       document.querySelector('#sgButton').value = "Press space to skip this question";
-      document.querySelector('#gamequestion').focus();
+      document.activeElement.blur(); // remove focus from the current element
+      currentFocus = 0; // set focus to the first answer radio
+      speak("How do you say this fraction?");
       // generate numbers 
       var num1 = 0;
       var num2 = 0;
