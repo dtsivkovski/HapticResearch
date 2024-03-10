@@ -20,13 +20,6 @@
   Use arrow keys to navigate between the multiple choice options in each category.
   Press space to select and submit.`;
 
-document.addEventListener('keydown', function(event) {
-    // if 'H' is pressed, speak help message
-    if (event.key === 'h' || event.key === 'H') {
-        speak(ttsHelpMessage);
-    }
-});
-
 </script>
 <body class="bg-dark text-light">
   <style>
@@ -151,7 +144,7 @@ document.addEventListener('keydown', function(event) {
   </div> -->
 
   <div class="pt-3">
-    <button class="btn btn-rounded btn-primary mx-1" onclick="playGame()" id="sgButton">Start Game</button>
+    <button class="btn btn-rounded btn-primary mx-1" onclick="playGame()" id="sgButton" value="Press space to start the game">Start Game</button>
   </div>
   <div id="gamediv" class="pt-2 container justify-content-center text-center" style="display: none !important;">
       <div class="pt-2">
@@ -178,6 +171,70 @@ document.addEventListener('keydown', function(event) {
         <h3 id="streak"></h3>
       </div>  
   </div>
+
+  <script>
+
+    // establish navigation for the screen
+    // J is for tabbing forward, F is for tabbing backwards, and space is for selecting
+    const navigatableElements = ['sgButton', 'gamequestion',
+                                'numAnswer_0', 'numAnswer_1', 'numAnswer_2', 'numAnswer_3', 
+                                'denomAnswer_0', 'denomAnswer_1', 'denomAnswer_2', 'denomAnswer_3', 
+                                'checkAnswerButton'];
+
+    var currentFocus = 0;
+
+
+    // functions for navigating the questions screen
+    function focusNext() {
+      document.getElementById(navigatableElements[currentFocus]).blur();
+      if (currentFocus == navigatableElements.length - 1) {
+        currentFocus = -1;
+      }
+      document.getElementById(navigatableElements[++currentFocus]).focus();
+    }
+
+    function focusPrev() {
+      document.getElementById(navigatableElements[currentFocus]).blur();
+      if (currentFocus == 0) {
+        currentFocus = navigatableElements.length;
+      }
+      document.getElementById(navigatableElements[--currentFocus]).focus();
+    }
+
+    function selectCurrent() {
+      document.getElementById(navigatableElements[currentFocus]).click();
+    }
+
+    // event listeners for functions listed above
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'F' || event.key === 'f') {
+        // try to focus previous element
+        try {
+          focusPrev();
+        }
+        catch (error) {
+          document.getElementById('sgButton').focus();
+        }
+      } 
+      else if (event.key === 'J' || event.key === 'j') {
+        // try to focus next element
+        try {
+          focusNext();
+        }
+        catch (error) {
+          document.getElementById('sgButton').focus();
+        }
+      } 
+      else if (event.key === ' ') {
+        // select the current element
+        selectCurrent();
+      }
+      else if (event.key === 'H' || event.key === 'h') {
+        speak(ttsHelpMessage);
+      }
+    });
+
+  </script>
 
   <script>
 
@@ -208,10 +265,21 @@ document.addEventListener('keydown', function(event) {
 
     var correctAnswer = ""; // used to save the text of the correct answer
 
+    // add tts to necessary focus elements
+    document.querySelector('#sgButton').addEventListener('focus', function() {
+      speak(this.value);
+    });
+    document.querySelector('#gamequestion').addEventListener('focus', function() {
+      speak(this.textContent);
+    });
+
+
     function playGame() {
 
       document.querySelector('#gamediv').style = "display: block !important";
       document.querySelector('#sgButton').innerHTML = "Skip Question";
+      document.querySelector('#sgButton').value = "Press space to skip this question";
+      document.querySelector('#gamequestion').focus();
       // generate numbers 
       var num1 = 0;
       var num2 = 0;
@@ -313,7 +381,7 @@ document.addEventListener('keydown', function(event) {
         numRadio.className = "form-check-input";
         numRadio.type = "radio";
         numRadio.name = "numAnswerRadios";
-        numRadio.id = numeratorBank[i];
+        numRadio.id = "numAnswer_" + i;
         numRadio.value = numeratorBank[i];
         var numLabel = document.createElement('label');
         // creating the label for hte input
@@ -324,6 +392,9 @@ document.addEventListener('keydown', function(event) {
         // add event listener for focus
         numRadio.addEventListener('focus', function() {
           speak(this.value);
+        });
+        numRadio.addEventListener('click', function() {
+          speak("You selected " + this.value + " as the numerator.");
         });
 
         // append the radio and label to the div
@@ -339,7 +410,7 @@ document.addEventListener('keydown', function(event) {
         denomRadio.className = "form-check-input";
         denomRadio.type = "radio";
         denomRadio.name = "denomAnswerRadios";
-        denomRadio.id = denominatorBank[i];
+        denomRadio.id = "denomAnswer_" + i;
         denomRadio.value = denominatorBank[i];
         var denomLabel = document.createElement('label');
         // creating the label
@@ -350,6 +421,9 @@ document.addEventListener('keydown', function(event) {
         // add event listener for focus
         denomRadio.addEventListener('focus', function() {
           speak(this.value);
+        });
+        denomRadio.addEventListener('click', function() {
+          speak("You selected " + this.value + " as the denominator.");
         });
 
         // denominator appending
@@ -402,13 +476,25 @@ document.addEventListener('keydown', function(event) {
 
     document.querySelector('#checkAnswerButton').addEventListener('click', checkAnswer);
     document.querySelector('#checkAnswerButton').addEventListener('focus', function() {
-      speak('You selected ' + document.querySelector('input[name="numAnswerRadios"]:checked').value 
+      // tries to speak selected answers
+      try {
+        speak('You selected ' + document.querySelector('input[name="numAnswerRadios"]:checked').value 
                           + " " 
                           + document.querySelector('input[name="denomAnswerRadios"]:checked').value
                           + ". Press space to submit.");
+      }
+      catch (error) {
+        speak('Please select an answer before submitting.'); // if no answer is selected
+      }
     });
 
     function checkAnswer() {
+      // if both answers are not selected, do not check
+      if (!document.querySelector('input[name="numAnswerRadios"]:checked') || !document.querySelector('input[name="denomAnswerRadios"]:checked')) {
+        speak('Please select an answer before submitting.');
+        return;
+      }
+
       document.querySelector('#checkAnswerButton').classList.add('disabled');
       // get user answer, correct answer is from the hidden div
       var userAnswer = document.querySelector('input[name="numAnswerRadios"]:checked').value 
