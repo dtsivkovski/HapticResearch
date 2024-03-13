@@ -112,11 +112,11 @@
       if (!serialPort || !serialPort.writable) {
         console.error('Serial port not connected or not writable.');
         if(!serialPort) {
-          alert('Please connect to the serial port first.');
+          // alert('Please connect to the serial port first.');
           return;
         }
         else if(!serialPort.writable) {
-          alert('Serial port is not writable. Please reconnect.');
+          // alert('Serial port is not writable. Please reconnect.');
         }
         return;
       }
@@ -496,6 +496,7 @@
       }
 
       document.querySelector('#checkAnswerButton').classList.add('disabled');
+      document.querySelector('#checkAnswerButton').removeEventListener('click', checkAnswer);
       // get user answer, correct answer is from the hidden div
       var userAnswer = document.querySelector('input[name="numAnswerRadios"]:checked').value 
                         + " " 
@@ -526,6 +527,7 @@
       setTimeout( () => {
         answerStatus.textContent = '';
         document.querySelector('#checkAnswerButton').classList.remove('disabled');
+        document.querySelector('#checkAnswerButton').addEventListener('click', checkAnswer);
       }, 4000);
 
       // wait 4 seconds, then play again
