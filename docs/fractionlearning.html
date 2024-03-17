@@ -200,7 +200,10 @@
     }
 
     function selectCurrent() {
-      document.getElementById(navigatableElements[currentFocus]).click();
+      // make sure it's not null
+      if (document.getElementById(navigatableElements[currentFocus])) {
+        document.getElementById(navigatableElements[currentFocus]).click();
+      }
     }
 
     // event listeners for functions listed above
@@ -265,6 +268,7 @@
     }
 
     var correctAnswer = ""; // used to save the text of the correct answer
+    var lastSelected = " "; // used to save the last selected radio button
 
     // add tts to necessary focus elements
     document.querySelector('#sgButton').addEventListener('focus', function() {
@@ -394,7 +398,14 @@
           speak(this.value);
         });
         numRadio.addEventListener('click', function() {
-          speak("You selected " + this.value + " as the numerator.");
+            if (lastSelected != this.id) {
+                speak("Selected " + this.value + " for the numerator.");
+                lastSelected = this.id;
+            }
+            else {
+                checkAnswer();
+                lastSelected = " ";
+            }
         });
 
         // append the radio and label to the div
@@ -423,7 +434,14 @@
           speak(this.value);
         });
         denomRadio.addEventListener('click', function() {
-          speak("You selected " + this.value + " as the denominator.");
+            if (lastSelected != this.id) {
+                speak("Selected " + this.value + " for the denominator.");
+                lastSelected = this.id;
+            }
+            else {
+                checkAnswer();
+                lastSelected = " ";
+            }
         });
 
         // denominator appending
@@ -495,12 +513,19 @@
         return;
       }
 
+      // disable the submit button
       document.querySelector('#checkAnswerButton').classList.add('disabled');
       document.querySelector('#checkAnswerButton').removeEventListener('click', checkAnswer);
+
       // get user answer, correct answer is from the hidden div
       var userAnswer = document.querySelector('input[name="numAnswerRadios"]:checked').value 
                         + " " 
                         + document.querySelector('input[name="denomAnswerRadios"]:checked').value;
+
+      // remove all radio elements
+      document.querySelector('#numAnswerRadios').innerHTML = "";
+      document.querySelector('#denomAnswerRadios').innerHTML = "";
+      
       // get divs for displaying scores and answer correct/incorrect
       const answerStatus = document.querySelector('#answerStatus');
       const pointTotalDiv = document.querySelector('#pointTotal');

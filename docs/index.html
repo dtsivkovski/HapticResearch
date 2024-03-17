@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap" rel="stylesheet">
   <link rel="icon" href="appicon.ico">
   <link rel="stylesheet" href="assets/mstyle.css" type="text/css">
+  <script src="assets/tts.js"></script>
 </head>
 <body class="bg-dark text-light">
     <style>
@@ -37,12 +38,12 @@
         color: #868686;
         border-radius: 10px;
         text-decoration: none;
-        transition: all 0.3s ease-in-out;
+        transition: all 0.2s ease-in-out;
     }
     .main-link:hover, .main-link:focus {
         color: #ffffff;
         text-decoration: none;
-        font-size: 65px;
+        font-size: 50px;
     }
 
     
@@ -51,9 +52,71 @@
         <h1 class="display-2 pt-5">Braille Display</h1>
         <p class="lead">A web application to display braille characters on the braille display.</p>
         <hr class="my-4">
-        <a class="display-5 main-link" href="controller.html" title="Shape and Number Controller">Shape and Number Controller</a>
+        <a class="display-5 main-link" id="snController" href="controller.html" title="Shape and Number Controller">Shape and Number Controller</a>
         <br/>
-        <a class="display-5 main-link" href="game.html" title="Basic Math Game">Basic Math Game</a>
+        <a class="display-5 main-link" id="shapeGame" href="shapegame.html" title="Shape Game">Shape Game</a>
         <br/>
-        <a class="display-5 main-link" href="fractionlearning.html" title="Fraction Game">Fraction Game</a>
+        <a class="display-5 main-link" id="mathGame" href="game.html" title="Basic Math Game">Basic Math Game</a>
+        <br/>
+        <a class="display-5 main-link" id="fractionGame" href="fractionlearning.html" title="Fraction Game">Fraction Game</a>
     </div>
+
+<script>
+        // navigate the page using f, j, space
+        const navigatableElements = ['snController', 'shapeGame', 'mathGame', 'fractionGame'];
+
+    var currentFocus = 0;
+
+
+    // functions for navigating the questions screen
+    function focusNext() {
+      document.getElementById(navigatableElements[currentFocus]).blur();
+      if (currentFocus == navigatableElements.length - 1) {
+        currentFocus = -1;
+      }
+      document.getElementById(navigatableElements[++currentFocus]).focus();
+    }
+
+    function focusPrev() {
+      document.getElementById(navigatableElements[currentFocus]).blur();
+      if (currentFocus == 0) {
+        currentFocus = navigatableElements.length;
+      }
+      document.getElementById(navigatableElements[--currentFocus]).focus();
+    }
+
+    function selectCurrent() {
+      document.getElementById(navigatableElements[currentFocus]).click();
+    }
+
+    // event listeners for functions listed above
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'F' || event.key === 'f') {
+        // try to focus previous element
+        try {
+          focusPrev();
+        }
+        catch (error) {
+          document.getElementById('snController').focus();
+        }
+      } 
+      else if (event.key === 'J' || event.key === 'j') {
+        // try to focus next element
+        try {
+          focusNext();
+        }
+        catch (error) {
+          document.getElementById('snController').focus();
+        }
+      } 
+      else if (event.key === ' ') {
+        // select the current element
+        selectCurrent();
+      }
+      else if (event.key === 'H' || event.key === 'h') {
+        speak(ttsHelpMessage);
+      }
+    });
+</script>
+
+</body>

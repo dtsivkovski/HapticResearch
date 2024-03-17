@@ -143,11 +143,14 @@ function checkAnswer() {
     speak('Please select an answer before submitting.');
     return;
     }
-
+    // disable the button to prevent spam clicks
     document.querySelector('#checkAnswerButton').classList.add('disabled');
     document.querySelector('#checkAnswerButton').removeEventListener('click', checkAnswer);
     // get user answer, correct answer is from the hidden div
     var userAnswer = document.querySelector('input[name="answerButtons"]:checked').value;
+    // clear the answer buttons
+    document.querySelector('#answerButtons').innerHTML = '';
+
     // get divs for displaying scores and answer correct/incorrect
     const answerStatus = document.querySelector('#answerStatus');
     const pointTotalDiv = document.querySelector('#pointTotal');
