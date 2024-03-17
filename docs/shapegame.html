@@ -14,9 +14,9 @@
 </head>
 <script>
   // set tts help text
-  const ttsHelpMessage = `Instructions. Read the fraction on the braille display.
+  const ttsHelpMessage = `Instructions. Identify the shape on the braille display.
   Select the correct answer from the multiple choice options.
-  Use j to navigate forwards, f to navigate backwards, and space to select.`;
+  Use j to navigate forwards, f to navigate backwards, and space to select. Press space a second time on the same answer to submit, or use the submit button. `;
 
 </script>
 <body class="bg-dark text-light">
@@ -69,8 +69,8 @@
          <h3 id="gamequestion">What is this shape?</h3>
       </div>
       <div class="py-2 d-flex justify-content-center">
-        <div class="row">
-          <div class="col-6 justify-content-center text-left pr-4" id="answerButtons">
+        <div class="flex-row">
+          <div class="flex-column justify-content-center text-left pr-4" id="answerButtons">
             <!-- answer buttons go here -->
           </div>
         </div>
@@ -94,7 +94,7 @@
     // establish navigation for the screen
     // J is for tabbing forward, F is for tabbing backwards, and space is for selecting
     const navigatableElements = ['sgButton', 
-                                'answer_0', 'answer_1', 'answer_2', 'answer_3',
+                                'shapeAnswer_0', 'shapeAnswer_1', 'shapeAnswer_2', 'shapeAnswer_3',
                                 'checkAnswerButton'];
 
     var currentFocus = 0;
