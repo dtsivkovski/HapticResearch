@@ -11,7 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap" rel="stylesheet">
   <link rel="icon" href="appicon.ico">
   <link rel="stylesheet" href="assets/mstyle.css" type="text/css">
-  <script src="assets/tts.js"></script>
 </head>
 <body class="bg-dark text-light">
     <style>
@@ -45,11 +44,12 @@
         text-decoration: none;
         font-size: 50px;
     }
-
     
     </style>
     <div class="jumbotron" style="justify-content: center; text-align: center;">
         <h1 class="display-2 pt-5">Braille Display</h1>
+        <button class="btn btn-rounded btn-warning mx-1" id="tts-toggler">TTS Toggler</button>
+        <script src="assets/tts.js"></script>
         <p class="lead">A web application to display braille characters on the braille display.</p>
         <hr class="my-4">
         <a class="display-5 main-link" id="snController" href="controller.html" title="Shape and Number Controller">Shape and Number Controller</a>
@@ -62,11 +62,12 @@
     </div>
 
 <script>
-        // navigate the page using f, j, space
-        const navigatableElements = ['snController', 'shapeGame', 'mathGame', 'fractionGame'];
+    // navigate the page using f, j, space
+    const navigatableElements = ['snController', 'shapeGame', 'mathGame', 'fractionGame'];
 
     var currentFocus = 0;
 
+    const ttsHelpMessage = 'Press F to focus the previous element, J to focus the next element, Space to select the current element, H to hear the help message again.';
 
     // functions for navigating the questions screen
     function focusNext() {
@@ -75,6 +76,7 @@
         currentFocus = -1;
       }
       document.getElementById(navigatableElements[++currentFocus]).focus();
+      speak(document.getElementById(navigatableElements[currentFocus]).textContent);
     }
 
     function focusPrev() {
@@ -115,6 +117,9 @@
       }
       else if (event.key === 'H' || event.key === 'h') {
         speak(ttsHelpMessage);
+      }
+      else if (event.key === 'T' || event.key === 't') {
+        document.getElementById('tts-toggler').click();
       }
     });
 </script>
