@@ -85,6 +85,7 @@
         currentFocus = navigatableElements.length;
       }
       document.getElementById(navigatableElements[--currentFocus]).focus();
+      speak(document.getElementById(navigatableElements[currentFocus]).textContent);
     }
 
     function selectCurrent() {
