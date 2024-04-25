@@ -269,6 +269,7 @@ function checkAnswer() {
         pointTotalDiv.textContent = 'Points: ' + ++pointTotal;
         streakDiv.textContent = 'Streak: ' + ++streak;
         speak("Correct! " + "You have " + pointTotal + " points.");
+        // streak system
         if (streak % 5 == 0) {
             if (streak == 20) speak("Woah there! 20 is super impressive! Good job!");
             else if (streak == 100) speak ("You're on fire! 100 questions in a row!");
@@ -277,19 +278,22 @@ function checkAnswer() {
     } else {
         wordsList = ["Not quite!", "Almost there!", "Nice try!", "Good effort!"];
         useWord = wordsList[Math.floor(Math.random() * wordsList.length)]; // gets a random word
-    // incorrect answer - gives feedback for the correct answer
+        // incorrect answer - gives feedback for the correct answer
         answerStatus.textContent = useWord + ' The correct answer is ' + correctAnswer + ".";
         speak(useWord + " The correct answer is " + correctAnswer + ". You have " + pointTotal + " points.")
         answerStatus.className = 'text-danger';
         streak = 0;
         streakDiv.textContent = 'Streak: ' + streak;
     }
+    // also show the correct answer on the display
+    answerNumString = "N" + correctAnswer + "     ";
+    sendNumber(answerNumString);
     
     // reset after 4 seconds
     setTimeout( () => {
-    answerStatus.textContent = '';
-    document.querySelector('#checkAnswerButton').classList.remove('disabled');
-    document.querySelector('#checkAnswerButton').addEventListener('click', checkAnswer);
+        answerStatus.textContent = '';
+        document.querySelector('#checkAnswerButton').classList.remove('disabled');
+        document.querySelector('#checkAnswerButton').addEventListener('click', checkAnswer);
     }, 4000);
 
     // wait 4 seconds, then play again
