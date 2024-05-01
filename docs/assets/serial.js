@@ -4,7 +4,11 @@ const connectButton = document.getElementById('connectButton');
 // function to connect to serial port
 connectButton.addEventListener('click', async () => {
     try {
-    serialPort = await navigator.serial.requestPort();
+    let filters = [
+        { usbVendorId: 0x2341, usbProductId: 0x0043 },
+        { usbVendorId: 0x2341, usbProductId: 0x0001 }
+    ];
+    serialPort = await navigator.serial.requestPort({filters});
     await serialPort.open({ baudRate: 9600 });
     console.log('Serial port connected.');
     // document.getElementById('connection-status').textContent = 'Status: Connected';
@@ -27,15 +31,8 @@ connectButton.addEventListener('click', async () => {
 // function to send data
 async function sendData(data) {
     if (!serialPort || !serialPort.writable) {
-    console.error('Serial port not connected or not writable.');
-    if(!serialPort) {
-        // alert('Please connect to the serial port first.');
+        console.error('Serial port not connected or not writable.');
         return;
-    }
-    else if(!serialPort.writable) {
-        // alert('Serial port is not writable. Please reconnect.');
-    }
-    return;
     }
 
     // encodes the data being sent to the arduino port
