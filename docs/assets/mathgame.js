@@ -93,6 +93,9 @@ function playGame() {
       Math.floor(Math.random() * operators.length) // generates number from 0-3
     ];
 
+    // get difficulty from gameSelect selection
+    var difficulty = document.querySelector('#gameSelect').value;
+
     // generate numbers based on spacing and numerical limitations for each operator
     switch(operator) {
       case '/':
@@ -161,19 +164,27 @@ function playGame() {
     var answerBank = [];
     correctAnswer = answer;
     answerBank.push(correctAnswer);
-    while (answerBank.length < 4) {
-        // generate random distances from the correct answer 
-        var randNum = Math.floor((Math.random() * 10)); 
-        var randOperator = Math.floor((Math.random() * 2)); // negative or positive
-        // random change of negative distance
-        if (randOperator == 0) {
-            randNum = -randNum;
+    if (difficulty == 0) { // easy difficulty
+        while (answerBank.length < 4) {
+            // generate random distances from the correct answer 
+            var randNum = Math.floor((Math.random() * 20)); 
+            var randOperator = Math.floor((Math.random() * 2)); // negative or positive
+            // random change of negative distance
+            if (randOperator == 0) {
+                randNum = -randNum;
+            }
+            // create new answer and add to answerbank
+            var newAnswer = answer + randNum;
+            if (!answerBank.includes(newAnswer)) {
+                answerBank.push(newAnswer);
+            }
         }
-        // create new answer and add to answerbank
-        var newAnswer = answer + randNum;
-        if (!answerBank.includes(newAnswer)) {
-            answerBank.push(newAnswer);
-        }
+    }
+    else if (difficulty == 1) { // medium difficulty
+
+    }
+    else { // hard difficulty
+
     }
 
     // shuffle the array
