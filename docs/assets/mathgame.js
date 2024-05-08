@@ -100,9 +100,23 @@ function playGame() {
     switch(operator) {
       case '/':
         // if division is the operator, make sure the numbers are divisible without remainder
-        while (num1 % num2 != 0) {
-          num1 = Math.floor(Math.random() * 100);
-          num2 = Math.floor(Math.random() * 10);
+        if (difficulty == 0) { // if easy
+            while (num1 % num2 != 0) {
+              num1 = Math.floor(Math.random() * 10);
+              num2 = Math.floor(Math.random() * 10);
+            }
+        }
+        else if (difficulty == 1) { // if medium
+            while (num1 % num2 != 0) {
+                num1 = Math.floor(Math.random() * 100);
+                num2 = Math.floor(Math.random() * 8) + 2;
+            }
+        }
+        else {
+            while (num1 % num2 != 0) {
+                num1 = Math.floor(Math.random() * 50) + 50;
+                num2 = Math.floor(Math.random() * 8) + 2;
+              }
         }
         break
       case '*':
@@ -116,6 +130,27 @@ function playGame() {
         }
         break
       case '-':
+        if (difficulty == 0) { // if easy
+            num1 = Math.floor(Math.random() * 10);
+            num2 = Math.floor(Math.random() * 10);
+            while (num1 - num2 <= 0) {
+                num1 = Math.floor(Math.random() * 10);
+                num2 = Math.floor(Math.random() * 10);
+            }
+        }
+        else if (difficulty == 1) { // if medium
+            num1 = Math.floor(Math.random() * 100);
+            num2 = Math.floor(Math.random() * 100);
+            while (num1 - num2 < 0) { // regenerate if negative
+                num1 = Math.floor(Math.random() * 100);
+                num2 = Math.floor(Math.random() * 100);
+            }
+        } else {
+            num1 = Math.floor(Math.random() * 100);
+            num2 = Math.floor(Math.random() * 100);
+        }
+
+        break;
       case '+':
         // allow up to 99 for addition and subtraction
         num1 = Math.floor(Math.random() * 100);
@@ -164,27 +199,19 @@ function playGame() {
     var answerBank = [];
     correctAnswer = answer;
     answerBank.push(correctAnswer);
-    if (difficulty == 0) { // easy difficulty
-        while (answerBank.length < 4) {
-            // generate random distances from the correct answer 
-            var randNum = Math.floor((Math.random() * 20)); 
-            var randOperator = Math.floor((Math.random() * 2)); // negative or positive
-            // random change of negative distance
-            if (randOperator == 0) {
-                randNum = -randNum;
-            }
-            // create new answer and add to answerbank
-            var newAnswer = answer + randNum;
-            if (!answerBank.includes(newAnswer)) {
-                answerBank.push(newAnswer);
-            }
+    while (answerBank.length < 4) {
+        // generate random distances from the correct answer 
+        var randNum = Math.floor((Math.random() * 10)); 
+        var randOperator = Math.floor((Math.random() * 2)); // negative or positive
+        // random change of negative distance
+        if (randOperator == 0) {
+            randNum = -randNum;
         }
-    }
-    else if (difficulty == 1) { // medium difficulty
-
-    }
-    else { // hard difficulty
-
+        // create new answer and add to answerbank
+        var newAnswer = answer + randNum;
+        if (!answerBank.includes(newAnswer)) {
+            answerBank.push(newAnswer);
+        }
     }
 
     // shuffle the array
