@@ -121,12 +121,32 @@ function playGame() {
         break
       case '*':
         // allow up to 99 for multiplication
-        num1 = Math.floor(Math.random() * 100);
-        num2 = Math.floor(Math.random() * 10);
-        // set upper limit at 100
-        while (num1 * num2 > 100) {
-          num1 = Math.floor(Math.random() * 100);
-          num2 = Math.floor(Math.random() * 10);
+        if (difficulty == 0) { // if easy
+            // max 1 digit multiplication
+            num1 = Math.floor(Math.random() * 10);
+            num2 = Math.floor(Math.random() * 10);
+            while ((num1 * num2) > 50 || (num1 * num2) <= 0) {
+                num1 = Math.floor(Math.random() * 10);
+                num2 = Math.floor(Math.random() * 10);
+            }
+        }
+        else if (difficulty == 1) { // if medium
+            // max 2 digit multiplication
+            num1 = Math.floor(Math.random() * 100);
+            num2 = Math.floor(Math.random() * 10);
+            while ((num1 * num2) > 100 || (num1 * num2) <= 0) {
+                num1 = Math.floor(Math.random() * 100);
+                num2 = Math.floor(Math.random() * 10);
+            }
+        }
+        else {
+            // max 2 digit multiplication
+            num1 = Math.floor(Math.random() * 100);
+            num2 = Math.floor(Math.random() * 10);
+            while ((num1 * num2) < 100 || (num1 * num2) <= 0) {
+                num1 = Math.floor(Math.random() * 100);
+                num2 = Math.floor(Math.random() * 10);
+            }
         }
         break
       case '-':
@@ -152,14 +172,26 @@ function playGame() {
 
         break;
       case '+':
-        // allow up to 99 for addition and subtraction
-        num1 = Math.floor(Math.random() * 100);
-        num2 = Math.floor(Math.random() * 100);
-        // set upper limit at 100
-        while (num1 + num2 > 100) {
-          num1 = Math.floor(Math.random() * 100);
-          num2 = Math.floor(Math.random() * 100);
+        if (difficulty == 0) { // if easy
+            num1 = Math.floor(Math.random() * 10);
+            num2 = Math.floor(Math.random() * 10);
         }
+        else if (difficulty == 1) { // if medium
+            num1 = Math.floor(Math.random() * 100);
+            num2 = Math.floor(Math.random() * 100);
+            while (num1 + num2 > 100) {
+                num1 = Math.floor(Math.random() * 100);
+                num2 = Math.floor(Math.random() * 100);
+            }
+        } else {
+            num1 = Math.floor(Math.random() * 100);
+            num2 = Math.floor(Math.random() * 100);
+            while (num1 + num2 < 100) {
+                num1 = Math.floor(Math.random() * 100);
+                num2 = Math.floor(Math.random() * 100);
+            }
+        }
+
         break
     }
 
