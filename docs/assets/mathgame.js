@@ -37,6 +37,20 @@ const nDict = {
 var correctAnswer;
 var lastSelected = " ";
 
+var bufferIndex = 0;
+var bufferString = "";
+
+
+// creates a buffer of data to be sent to the arduino, can be advanced
+function createBuffer(numString) {
+    
+}
+
+// buffer function for sending number data to the arduino
+function advanceBuffer() {
+
+}
+
 function sendNumber(numString) {
       
     const gap = '0';
@@ -114,14 +128,9 @@ function playGame() {
         break
       case '-':
       case '+':
-        // allow up to 99 for addition and subtraction
-        num1 = Math.floor(Math.random() * 100);
-        num2 = Math.floor(Math.random() * 100);
-        // set upper limit at 100
-        while (num1 + num2 > 100) {
-          num1 = Math.floor(Math.random() * 100);
-          num2 = Math.floor(Math.random() * 100);
-        }
+        //TODO: change back to reasonable numbers, this is just for testing
+        num1 = Math.floor(Math.random() * 10000);
+        num2 = Math.floor(Math.random() * 10000);
         break
     }
 
@@ -227,7 +236,7 @@ function playGame() {
     }
 
     console.log("ca(" + correctAnswer + ")");
-    sendNumber(numString);
+    createBuffer(numString);
 
 }
 
