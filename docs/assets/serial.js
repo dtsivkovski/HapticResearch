@@ -42,4 +42,6 @@ async function sendData(data) {
     await writer.write(dataArray);
     writer.releaseLock();
     console.log('Data sent to Arduino:', data);
+
+    // TODO: Add event listener to listen for buttons, implement physical buttons
 }

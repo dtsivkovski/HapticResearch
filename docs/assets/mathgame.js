@@ -39,19 +39,65 @@ var lastSelected = " ";
 
 var bufferIndex = 0;
 var bufferString = "";
+var bufferStringLen = 0;
 
 
 // creates a buffer of data to be sent to the arduino, can be advanced
-function createBuffer(numString) {
-    
+function createBuffer(input) {
+    bufferString = input.trim();
+    bufferIndex = 0;
+    bufferStringLen = bufferString.length;
+
+    var firstString = bufferString.substring(0,6); // select first six chars
+    sendNumber(firstString); 
 }
 
 // buffer function for sending number data to the arduino
-function advanceBuffer() {
+function advanceBuffer(charsAdvanced) {
+    if (bufferStringLen == 0) return; // return if empty
 
+    var newBI = bufferIndex + charsAdvanced;
+    // check to see if new index is out of bounds
+    if (newBI >= bufferStringLen) 
+        return;
+    else 
+        bufferIndex = newBI; // update bufferIndex
+
+    // get upper bound and check if it is out of bounds
+    var upperBound = bufferIndex + 6;
+    if (upperBound > bufferStringLen) {
+        upperBound = bufferStringLen; // make the size as the maximum upper bound
+    }
+
+    var newString = bufferString.substring(bufferIndex, upperBound);
+    sendNumber(newString); // send the new substring
 }
 
-function sendNumber(numString) {
+function moveBackBuffer(charsMovedBack) {
+    if (bufferStringLen == 0) return;
+
+    var newBI = bufferIndex - charsMovedBack;
+    // check out of bounds
+    if (newBI < 0) 
+        return;
+    else
+        bufferIndex = newBI;
+
+    // upper bound does not need to be checked
+
+    var newString = bufferString.substring(bufferIndex, bufferIndex + 6);
+    sendNumber(newString);
+}
+
+function sendNumber(inputString) {
+
+    // get length of string and append blanks if necessary
+    var numString = inputString;
+    var remainingLen = 6 - numString.length;
+    while (remainingLen > 0) {
+        numString += " ";
+        remainingLen--;
+    }
       
     const gap = '0';
     const centerGap = '00000000'
@@ -129,8 +175,8 @@ function playGame() {
       case '-':
       case '+':
         //TODO: change back to reasonable numbers, this is just for testing
-        num1 = Math.floor(Math.random() * 10000);
-        num2 = Math.floor(Math.random() * 10000);
+        num1 = Math.floor(Math.random() * 50000);
+        num2 = Math.floor(Math.random() * 50000);
         break
     }
 
