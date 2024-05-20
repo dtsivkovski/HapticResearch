@@ -4,5 +4,4 @@ Research on the display of shapes, numbers, and interactive games on a grid on a
 
 # Important Pages
 
-- [Braille Display Controller](https://dtsivkovski.github.io/HapticResearch/controller.html)
-- [Math Game](https://dtsivkovski.github.io/HapticResearch/game.html)
+- [Braille Display Control Home](https://dtsivkovski.github.io/HapticResearch/index.html)
