@@ -37,18 +37,18 @@ There are two modes of navigation, page navigation and line navigation. Page nav
 *Last updated 05/21/24.*
 
 - [Shape and Number Controller](https://dtsivkovski.github.io/HapticResearch/controller.html)
+  - [ ] - Focus and Selection
+  - [ ] - Assistance
+  - [x] - Multi-Line Display Navigation
+- [Shape Game](https:https://dtsivkovski.github.io/HapticResearch/shapegame.html)
   - [x] - Focus and Selection
   - [x] - Assistance
-  - [✓] - Multi-Line Display Navigation
-- [Shape Game](https:https://dtsivkovski.github.io/HapticResearch/shapegame.html)
-  - [✓] - Focus and Selection
-  - [✓] - Assistance
-  - [x] - Multi-Line Display Navigation (*not necessary for shapes*)
+  - [ ] - Multi-Line Display Navigation (*not necessary for shapes*)
 - [Basic Math Game](https://dtsivkovski.github.io/HapticResearch/mathgame.html)
-  - [✓] - Focus and Selection
-  - [✓] - Assistance
-  - [✓] - Multi-Line Display Navigation
-- [Fraction Game](https://dtsivkovski.github.io/HapticResearch/mathgame.html)
-  - [✓] - Focus and Selection
-  - [✓] - Assistance
+  - [x] - Focus and Selection
+  - [x] - Assistance
   - [x] - Multi-Line Display Navigation
+- [Fraction Game](https://dtsivkovski.github.io/HapticResearch/mathgame.html)
+  - [x] - Focus and Selection
+  - [x] - Assistance
+  - [ ] - Multi-Line Display Navigation
