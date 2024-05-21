@@ -572,49 +572,7 @@
           upperBound = bufferStringLen; // make the size as the maximum upper bound
       }
 
-      var newString = bufferStr
-      // get length of string and append blanks if necessary
-      var numString = inputString;
-      var remainingLen = 6 - numString.length;
-      while (remainingLen > 0) {
-          numString += " ";
-          remainingLen--;
-      }
-        
-      const gap = '0';
-      const centerGap = '00000000'
-
-      // display the numbers and operator on the braille display 
-      // https://braillebug.org/braille/math-in-braille/
-
-      var outputString = "";
-
-
-      // row 1
-      outputString = outputString + nDict[numString[0]].substring(0, 2) + gap + nDict[numString[1]].substring(0, 2) + gap + nDict[numString[2]].substring(0, 2);
-
-      // row 2
-      outputString = outputString + nDict[numString[0]].substring(2, 4) + gap + nDict[numString[1]].substring(2, 4) + gap + nDict[numString[2]].substring(2, 4);
-
-      // row 3
-      outputString = outputString + nDict[numString[0]].substring(4, 6) + gap + nDict[numString[1]].substring(4, 6) + gap + nDict[numString[2]].substring(4, 6);
-
-      // row 4 and 5 - center gap
-      outputString = outputString + centerGap + centerGap;
-
-      // row 6
-      outputString = outputString + nDict[numString[3]].substring(0, 2) + gap + nDict[numString[4]].substring(0, 2) + gap + nDict[numString[5]].substring(0, 2);
-
-      // row 7
-      outputString = outputString + nDict[numString[3]].substring(2, 4) + gap + nDict[numString[4]].substring(2, 4) + gap + nDict[numString[5]].substring(2, 4);
-
-      // row 8
-      outputString = outputString + nDict[numString[3]].substring(4, 6) + gap + nDict[numString[4]].substring(4, 6) + gap + nDict[numString[5]].substring(4, 6);
-
-      // send the outputString to the arduino
-      sendData(outputString);
-
-      }ing.substring(bufferIndex, upperBound);
+      var newString = bufferString.substring(bufferIndex, upperBound);
       sendNumber(newString); // send the new substring
     }
 
@@ -646,6 +604,9 @@
       }
       else if (event.key === ",") {
         moveBackBuffer(3); // only move one line up
+      }
+      else if (event.key === 'C' || event.key === 'c') {
+        connectButton.click(); // try to open connection menu
       }
     });
 

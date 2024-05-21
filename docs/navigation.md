@@ -38,7 +38,7 @@ There are two modes of navigation, page navigation and line navigation. Page nav
 
 - [Shape and Number Controller](https://dtsivkovski.github.io/HapticResearch/controller.html)
   - [ ] - Focus and Selection
-  - [ ] - Assistance
+  - [x] - Assistance (TTS feature not enabled)
   - [x] - Multi-Line Display Navigation
 - [Shape Game](https:https://dtsivkovski.github.io/HapticResearch/shapegame.html)
   - [x] - Focus and Selection
