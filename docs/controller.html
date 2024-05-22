@@ -120,11 +120,11 @@
   <div class="d-flex justify-content-center py-4">
    <div class="p-2 w-75">
      <h2>Number Sender</h2>
-     <p>Enter a number (From -9999 to 99999) or a one-step operation (2+10) to send to the arduino.</p>
+     <p>Enter any number or a one-step operation (e.g. 2+5) to send to the display.</p>
      <div class="input-group m-3">
        <input class="form-control rounded-left" type="text" id="numberInput" min="0" max="99999" placeholder="0">
        <div class="input-group-append">
-         <button class="btn btn-primary rounded-right btn-overridehover" onclick="sendNumber()">Send Number</button>
+         <button class="btn btn-primary rounded-right btn-overridehover" onclick="submitOperation()">Send Number</button>
        </div>
      </div>
    </div>
@@ -217,7 +217,7 @@
     // event listener for the number input text box for enter key down
     document.getElementById('numberInput').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
-        sendNumber();
+        submitOperation();
       }
     });
 
@@ -485,7 +485,7 @@
       '.': '010001' 
     }
 
-    async function sendNumber() {
+    async function submitOperation() {
 
       // get number from input and establish variabels
       const number = document.getElementById('numberInput').value;
@@ -503,12 +503,6 @@
       else if (isOperation == null) {
          alert("Error! Please enter a valid operation or number.")
          return; // exits to avoid errors in the next steps from invalid input
-      }
-
-      // give an error if number is not between -9999 and 99999\
-      if (parseInt(resultString) < -9999 || parseInt(resultString) > 99999) {
-        alert("The number must be between -9999 and 99999");
-        return;
       }
 
       var numString = resultString;
@@ -543,32 +537,121 @@
         }
       }
 
-      console.log(processedNumString);
+      createBuffer(processedNumString);
       
+    }
+
+    var bufferIndex = 0;
+    var bufferString = "";
+    var bufferStringLen = 0;
+
+    // creates a buffer of data to be sent to the arduino, can be advanced
+    function createBuffer(input) {
+      bufferString = input.trim();
+      bufferIndex = 0;
+      bufferStringLen = bufferString.length;
+
+      var firstString = bufferString.substring(0,6); // select first six chars
+      sendNumber(firstString); 
+    }
+
+    // buffer function for sending number data to the arduino
+    function advanceBuffer(charsAdvanced) {
+      if (bufferStringLen == 0) return; // return if empty
+
+      var newBI = bufferIndex + charsAdvanced;
+      // check to see if new index is out of bounds
+      if (newBI >= bufferStringLen) 
+          return;
+      else 
+          bufferIndex = newBI; // update bufferIndex
+
+      // get upper bound and check if it is out of bounds
+      var upperBound = bufferIndex + 6;
+      if (upperBound > bufferStringLen) {
+          upperBound = bufferStringLen; // make the size as the maximum upper bound
+      }
+
+      var newString = bufferString.substring(bufferIndex, upperBound);
+      sendNumber(newString); // send the new substring
+    }
+
+    function moveBackBuffer(charsMovedBack) {
+      if (bufferStringLen == 0) return;
+
+      var newBI = bufferIndex - charsMovedBack;
+      // check out of bounds
+      if (newBI < 0) 
+          return;
+      else
+          bufferIndex = newBI;
+
+      // upper bound does not need to be checked
+
+      var newString = bufferString.substring(bufferIndex, bufferIndex + 6);
+      sendNumber(newString);
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === ']') {
+        advanceBuffer(6); // move entire page down
+      }
+      else if (event.key === '[') {
+        moveBackBuffer(6); // move entire page up
+      }
+      else if (event.key === ".") {
+        advanceBuffer(3); // only move one line down
+      }
+      else if (event.key === ",") {
+        moveBackBuffer(3); // only move one line up
+      }
+      else if (event.key === 'C' || event.key === 'c') {
+        connectButton.click(); // try to open connection menu
+      }
+    });
+
+    function sendNumber(inputString) {
+
+      // get length of string and append blanks if necessary
+      var numString = inputString;
+      var remainingLen = 6 - numString.length;
+      while (remainingLen > 0) {
+          numString += " ";
+          remainingLen--;
+      }
+        
+      const gap = '0';
+      const centerGap = '00000000'
+
+      // display the numbers and operator on the braille display 
+      // https://braillebug.org/braille/math-in-braille/
+
+      var outputString = "";
+
+
       // row 1
-      outputString = outputString + nDict[processedNumString[0]].substring(0,2) + gap + nDict[processedNumString[1]].substring(0,2) + gap + nDict[processedNumString[2]].substring(0,2);
+      outputString = outputString + nDict[numString[0]].substring(0, 2) + gap + nDict[numString[1]].substring(0, 2) + gap + nDict[numString[2]].substring(0, 2);
 
       // row 2
-      outputString = outputString + nDict[processedNumString[0]].substring(2,4) + gap + nDict[processedNumString[1]].substring(2,4) + gap + nDict[processedNumString[2]].substring(2,4);
+      outputString = outputString + nDict[numString[0]].substring(2, 4) + gap + nDict[numString[1]].substring(2, 4) + gap + nDict[numString[2]].substring(2, 4);
 
       // row 3
-      outputString = outputString + nDict[processedNumString[0]].substring(4,6) + gap + nDict[processedNumString[1]].substring(4,6) + gap + nDict[processedNumString[2]].substring(4,6);
+      outputString = outputString + nDict[numString[0]].substring(4, 6) + gap + nDict[numString[1]].substring(4, 6) + gap + nDict[numString[2]].substring(4, 6);
 
       // row 4 and 5 - center gap
       outputString = outputString + centerGap + centerGap;
 
       // row 6
-      outputString = outputString + nDict[processedNumString[3]].substring(0,2) + gap + nDict[processedNumString[4]].substring(0,2) + gap + nDict[processedNumString[5]].substring(0,2);
+      outputString = outputString + nDict[numString[3]].substring(0, 2) + gap + nDict[numString[4]].substring(0, 2) + gap + nDict[numString[5]].substring(0, 2);
 
       // row 7
-      outputString = outputString + nDict[processedNumString[3]].substring(2,4) + gap + nDict[processedNumString[4]].substring(2,4) + gap + nDict[processedNumString[5]].substring(2,4);
+      outputString = outputString + nDict[numString[3]].substring(2, 4) + gap + nDict[numString[4]].substring(2, 4) + gap + nDict[numString[5]].substring(2, 4);
 
       // row 8
-      outputString = outputString + nDict[processedNumString[3]].substring(4,6) + gap + nDict[processedNumString[4]].substring(4,6) + gap + nDict[processedNumString[5]].substring(4,6);
+      outputString = outputString + nDict[numString[3]].substring(4, 6) + gap + nDict[numString[4]].substring(4, 6) + gap + nDict[numString[5]].substring(4, 6);
 
       // send the outputString to the arduino
       sendData(outputString);
-      
     }
 
     // parse number input for operations

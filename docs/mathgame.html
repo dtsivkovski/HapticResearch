@@ -96,6 +96,7 @@
   </div>
 </body>
 
+<script src="assets/mathgame.js"></script> <!-- import game logic -->
 <script>
 
     // establish navigation for the screen
@@ -162,8 +163,18 @@
         speak('Navigated to the home page');
         location.href = 'https://dtsivkovski.github.io/HapticResearch/index.html';
       }
+      else if (event.key === ']') {
+        advanceBuffer(6);
+      }
+      else if (event.key === '[') {
+        moveBackBuffer(6);
+      }
+      else if (event.key === ".") {
+        advanceBuffer(3);
+      }
+      else if (event.key === ",") {
+        moveBackBuffer(3);
+      }
     });
 
   </script>
-
-  <script src="assets/mathgame.js"></script> <!-- import game logic -->
