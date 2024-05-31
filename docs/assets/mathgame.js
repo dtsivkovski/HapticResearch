@@ -134,6 +134,8 @@ function sendNumber(inputString) {
 
 }
 
+var mq;
+
 function playGame() {
 
     document.querySelector('#gamediv').style = "display: block !important";
@@ -142,145 +144,35 @@ function playGame() {
     document.activeElement.blur(); // remove focus from the current element
     currentFocus = 0; // set focus to the first answer radio
     speak("What is the answer to this math problem?");
-    // generate shape number
-    // generate two numbers between 0 and 9
-    var num1 = 0;
-    var num2 = 0;
 
-    // generate a random operator (+, -, *)
-    const operators = ['+', '-', '*', '/'];
-    const operator = operators[
-      Math.floor(Math.random() * operators.length) // generates number from 0-3
-    ];
-
-    // get difficulty from gameSelect selection
-    var difficulty = document.querySelector('#gameSelect').value;
-
-    // generate numbers based on spacing and numerical limitations for each operator
-    switch(operator) {
-      case '/':
-        // if division is the operator, make sure the numbers are divisible without remainder
-        if (difficulty == 0) { // if easy
-            while (num1 % num2 != 0) {
-              num1 = Math.floor(Math.random() * 10);
-              num2 = Math.floor(Math.random() * 10);
-            }
-        }
-        else if (difficulty == 1) { // if medium
-            while (num1 % num2 != 0) {
-                num1 = Math.floor(Math.random() * 100);
-                num2 = Math.floor(Math.random() * 8) + 2;
-            }
-        }
-        else {
-            while (num1 % num2 != 0) {
-                num1 = Math.floor(Math.random() * 950) + 50;
-                num2 = Math.floor(Math.random() * 98) + 2;
-              }
-        }
-        break
-      case '*':
-        // allow up to 99 for multiplication
-        if (difficulty == 0) { // if easy
-            // max 1 digit multiplication
-            num1 = Math.floor(Math.random() * 10);
-            num2 = Math.floor(Math.random() * 10);
-            while ((num1 * num2) > 50 || (num1 * num2) <= 0) {
-                num1 = Math.floor(Math.random() * 10);
-                num2 = Math.floor(Math.random() * 10);
-            }
-        }
-        else if (difficulty == 1) { // if medium
-            // max 2 digit multiplication
-            num1 = Math.floor(Math.random() * 100);
-            num2 = Math.floor(Math.random() * 10);
-            while ((num1 * num2) > 100 || (num1 * num2) <= 0) {
-                num1 = Math.floor(Math.random() * 100);
-                num2 = Math.floor(Math.random() * 10);
-            }
-        }
-        else {
-            // no max for multiplication
-            num1 = Math.floor(Math.random() * 100);
-            num2 = Math.floor(Math.random() * 100);
-            while ((num1 * num2) < 100 || (num1 * num2) <= 0) {
-                num1 = Math.floor(Math.random() * 100);
-                num2 = Math.floor(Math.random() * 100);
-            }
-        }
-        break
-      case '-':
-        if (difficulty == 0) { // if easy
-            num1 = Math.floor(Math.random() * 10);
-            num2 = Math.floor(Math.random() * 10);
-            while (num1 - num2 <= 0) {
-                num1 = Math.floor(Math.random() * 10);
-                num2 = Math.floor(Math.random() * 10);
-            }
-        }
-        else if (difficulty == 1) { // if medium
-            num1 = Math.floor(Math.random() * 100);
-            num2 = Math.floor(Math.random() * 100);
-            while (num1 - num2 < 0) { // regenerate if negative
-                num1 = Math.floor(Math.random() * 100);
-                num2 = Math.floor(Math.random() * 100);
-            }
-        } else {
-            num1 = Math.floor(Math.random() * 10000);
-            num2 = Math.floor(Math.random() * 10000);
-        }
-
-        break;
-      case '+':
-        if (difficulty == 0) { // if easy
-            num1 = Math.floor(Math.random() * 10);
-            num2 = Math.floor(Math.random() * 10);
-        }
-        else if (difficulty == 1) { // if medium
-            num1 = Math.floor(Math.random() * 100);
-            num2 = Math.floor(Math.random() * 100);
-            while (num1 + num2 > 100) {
-                num1 = Math.floor(Math.random() * 100);
-                num2 = Math.floor(Math.random() * 100);
-            }
-        } else {
-            num1 = Math.floor(Math.random() * 10000);
-            num2 = Math.floor(Math.random() * 10000);
-            while (num1 + num2 < 100) {
-                num1 = Math.floor(Math.random() * 10000);
-                num2 = Math.floor(Math.random() * 10000);
-            }
-        }
-        break
-    }
+    // generate new question using MathQuestion class
+    console.log(`Addition Skill Level: ${additionSkillLevel}`);
+    mq = new MathQuestion();
+    if (mq.operator === '+') mq.createAdditionQuestion();
 
     // calculate the answer and build the numstring
     var numString = "";
-    numString += "N" + num1; // N is in the dictionary as the number sign
+    numString += "N" + mq.num1; // N is in the dictionary as the number sign
     var htmlString = "What is ";
-    htmlString += num1 + " " + operator + " " + num2 + " ? ";
+    htmlString += mq.num1 + " " + mq.operator + " " + mq.num2 + " ? ";
     document.querySelector('#gamequestion').textContent = htmlString;
-    var answer;
+    var answer = mq.answer;
 
     // build the string based on the operator
-    switch (operator) {
+    switch (mq.operator) {
       // only one braille character for addition and subtraction
       case '+':
-        answer = num1 + num2;
-        numString += "+" + num2 + "  ";
+        numString += "+" + mq.num2 + "  ";
         break;
       case '-':
-        answer = num1 - num2;
-        numString += "-" + num2 + "  ";
+        numString += "-" + mq.num2 + "  ";
         break;
       // division and multiplicaiton require two braille characters
       case '*':
-        answer = num1 * num2;
-        numString += "*" + "m" + num2 + " ";
+        numString += "*" + "m" + mq.num2 + " ";
         break;
       case '/':
-        answer = num1 / num2;
-        numString += "/" + "d" + num2 + " ";
+        numString += "/" + "d" + mq.num2 + " ";
         break;
     }
 
@@ -398,6 +290,7 @@ function checkAnswer() {
         pointTotalDiv.textContent = 'Points: ' + ++pointTotal;
         streakDiv.textContent = 'Streak: ' + ++streak;
         speak("Correct! " + "You have " + pointTotal + " points.");
+        mq.updateSkillLevel(true);
         // streak system
         if (streak % 5 == 0) {
             if (streak == 20) speak("Woah there! 20 is super impressive! Good job!");
@@ -412,6 +305,7 @@ function checkAnswer() {
         speak(useWord + " The correct answer is " + correctAnswer + ". You have " + pointTotal + " points.")
         answerStatus.className = 'text-danger';
         streak = 0;
+        mq.updateSkillLevel(true);
         streakDiv.textContent = 'Streak: ' + streak;
     }
     // also show the correct answer on the display
