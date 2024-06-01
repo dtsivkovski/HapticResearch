@@ -146,9 +146,9 @@ function playGame() {
     speak("What is the answer to this math problem?");
 
     // generate new question using MathQuestion class
-    console.log(`Addition Skill Level: ${additionSkillLevel}`);
     mq = new MathQuestion();
     if (mq.operator === '+') mq.createAdditionQuestion();
+    else if (mq.operator === '-') mq.createSubtractionQuestion();
 
     // calculate the answer and build the numstring
     var numString = "";
@@ -184,7 +184,7 @@ function playGame() {
     answerBank.push(correctAnswer);
     while (answerBank.length < 4) {
         // generate random distances from the correct answer 
-        var randNum = Math.floor((Math.random() * 10)); 
+        var randNum = Math.floor((Math.random() * 20)); 
         var randOperator = Math.floor((Math.random() * 2)); // negative or positive
         // random change of negative distance
         if (randOperator == 0) {
@@ -305,7 +305,7 @@ function checkAnswer() {
         speak(useWord + " The correct answer is " + correctAnswer + ". You have " + pointTotal + " points.")
         answerStatus.className = 'text-danger';
         streak = 0;
-        mq.updateSkillLevel(true);
+        mq.updateSkillLevel(false);
         streakDiv.textContent = 'Streak: ' + streak;
     }
     // also show the correct answer on the display
