@@ -38,8 +38,20 @@ let multiplicationDifficultyRanges = [
     [11,11,100], // 10x10, 100 max
     [26,11,250], // 25x10, 250 max
     [41,21,500], // 40x20, 500 max
-    [101,101,1000] // 100x100, 1000 max
+    [101,101,1000], // 100x100, 1000 max
     [101,101,'none'] // 100x100, no max
+]
+
+let divisionSkillLevel = parseInt(localStorage.getItem("divisionSkillLevel")) || 75;
+let divisionAnswerStreak = 0;
+let divisionDifficultyRanges = [
+    [26,6,'none'], // 25/5 - bound for numbers means divisor must be above that
+    [65,9,0], // 64/8
+    [101,11,1],
+    [251,11,1],
+    [251,26,1],
+    [1001,26,1],
+    [1001,1001,1] // upper limit 1000/1000
 ]
 
 class MathQuestion {
@@ -53,14 +65,14 @@ class MathQuestion {
     answer = 0;
 
     constructor() {
-        this.operator = operators[Math.floor(Math.random() * 3)]; // random operator from list
+        this.operator = operators[Math.floor(Math.random() * 4)]; // random operator from list
     } // TODO: fix operator numbers to include division
 
     createQuestion() {
         if (this.operator === '+') this.createAdditionQuestion();
         else if (this.operator === '-') this.createSubtractionQuestion();
         else if (this.operator === '*') this.createMultiplicationQuestion(); //TODO: division question
-        else console.error("missing division feature"); //TODO: multiplication question
+        else this.createDivisionQuestion(); //TODO: multiplication question
     }
 
     createAdditionQuestion() {
@@ -102,11 +114,7 @@ class MathQuestion {
             this.num2 = Math.floor(Math.random() * questionBounds[1]); // get bounds from second val in array
             this.answer = this.num1 + this.num2;
         }
-        while (this.answer >= questionBounds[2] && questionBounds[2] !== 'none') { // regenerate if above bounds
-            this.num1 = Math.floor(Math.random() * questionBounds[0]); 
-            this.num2 = Math.floor(Math.random() * questionBounds[1]); 
-            this.answer = this.num1 + this.num2;
-        }
+        while (this.answer >= questionBounds[2] && questionBounds[2] !== 'none') // regenerate if above bounds
     }
 
     createSubtractionQuestion() {
@@ -148,11 +156,7 @@ class MathQuestion {
             this.num2 = Math.floor(Math.random() * questionBounds[1]); // get bounds from second val in array
             this.answer = this.num1 - this.num2;
         }
-        while (this.answer < questionBounds[2] && questionBounds[2] !== 'none') { // regenerate if above bounds
-            this.num1 = Math.floor(Math.random() * questionBounds[0]); 
-            this.num2 = Math.floor(Math.random() * questionBounds[1]); 
-            this.answer = this.num1 - this.num2;
-        }
+        while (this.answer < questionBounds[2] && questionBounds[2] !== 'none') // regenerate if below bounds
 
     }
 
@@ -196,11 +200,51 @@ class MathQuestion {
             this.num2 = Math.floor(Math.random() * questionBounds[1]); // get bounds from second val in array
             this.answer = this.num1 * this.num2;
         }
-        while (this.answer > questionBounds[2] && questionBounds[2] !== 'none') { // regenerate if above bounds
-            this.num1 = Math.floor(Math.random() * questionBounds[0]); 
-            this.num2 = Math.floor(Math.random() * questionBounds[1]); 
-            this.answer = this.num1 * this.num2;
+        while (this.answer > questionBounds[2] && questionBounds[2] !== 'none') // regenerate if above bounds
+
+    }
+
+    createDivisionQuestion() {
+
+        // set question value
+        console.log(divisionSkillLevel);
+        let questionVal = Math.pow(2,divisionAnswerStreak);
+        if (questionVal >= 16) 
+            questionVal = 16;
+        this.pointVal = questionVal;
+
+        let questionBounds;
+
+        // check skill level for division
+        if (divisionSkillLevel <= 50) {
+            questionBounds = divisionDifficultyRanges[0];
         }
+        else if (divisionSkillLevel <= 100) {
+            questionBounds = divisionDifficultyRanges[1];
+        }
+        else if (divisionSkillLevel <= 150) {
+            questionBounds = divisionDifficultyRanges[2];
+        }
+        else if (divisionSkillLevel <= 200) {
+            questionBounds = divisionDifficultyRanges[3];
+        }
+        else if (divisionSkillLevel <= 250) {
+            questionBounds = divisionDifficultyRanges[4];
+        }
+        else if (divisionSkillLevel <= 300) {
+            questionBounds = divisionDifficultyRanges[5];
+        }
+        else {
+            questionBounds = divisionDifficultyRanges[6];
+        }
+
+        // create question
+        do {
+            this.num1 = Math.floor(Math.random() * questionBounds[0]); // get bounds from first val in array
+            this.num2 = Math.floor(Math.random() * questionBounds[1]); // get bounds from second val in array
+            this.answer = this.num1 / this.num2;
+        }
+        while (this.num1 % this.num2 != 0 || this.num2 <= questionBounds[2]) // regenerate if doesn't divide evenly
 
     }
 
@@ -227,9 +271,6 @@ class MathQuestion {
             }
             localStorage.setItem("subtractionSkillLevel", subtractionSkillLevel.toString());
         }
-        else if (this.operator === '/') {
-
-        }
         else if (this.operator === '*') {
             if (isCorrect) {
                 multiplicationSkillLevel += this.pointVal;
@@ -240,9 +281,18 @@ class MathQuestion {
                 multiplicationAnswerStreak = 0;
             }
             localStorage.setItem("multiplicationSkillLevel", multiplicationSkillLevel.toString());
-
         }
-        // TODO: implement other operators
+        else if (this.operator === '/') {
+            if (isCorrect) {
+                divisionSkillLevel += this.pointVal;
+                divisionAnswerStreak++;
+            }
+            else {
+                divisionSkillLevel -= this.pointVal;
+                divisionAnswerStreak = 0;
+            }
+            localStorage.setItem("divisionSkillLevel", divisionSkillLevel.toString());
+        }
     }
     
 }
