@@ -147,8 +147,7 @@ function playGame() {
 
     // generate new question using MathQuestion class
     mq = new MathQuestion();
-    if (mq.operator === '+') mq.createAdditionQuestion();
-    else if (mq.operator === '-') mq.createSubtractionQuestion();
+    mq.createQuestion();
 
     // calculate the answer and build the numstring
     var numString = "";
