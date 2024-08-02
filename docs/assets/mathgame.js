@@ -141,6 +141,7 @@ function playGame() {
     document.querySelector('#gamediv').style = "display: block !important";
     document.querySelector('#sgButton').innerHTML = "Skip Question";
     document.querySelector('#sgButton').value = "Press space to skip this question";
+    document.querySelector("#statsButton").innerHTML = "View Stats (ends current streak!)"
     document.activeElement.blur(); // remove focus from the current element
     currentFocus = 0; // set focus to the first answer radio
     speak("What is the answer to this math problem?");

@@ -1,9 +1,31 @@
 let operators = ['+', '-', '*', '/'];
 
+// retrieve all local variables
+let longestAdditionAnswerStreak = parseInt(localStorage.getItem("longestAdditionAnswerStreak")) || 0;
+let longestSubtractionAnswerStreak = parseInt(localStorage.getItem("longestSubtractionAnswerStreak")) || 0;
+let longestMultiplicationAnswerStreak = parseInt(localStorage.getItem("longestMultiplicationAnswerStreak")) || 0;
+let longestDivisionAnswerStreak = parseInt(localStorage.getItem("longestDivisionAnswerStreak")) || 0;
+let longestOverallAnswerStreak = parseInt(localStorage.getItem("longestOverallAnswerStreak")) || 0;
+let currentOverallStreak = 0;
+// default skill level for unknown questions is 75
+let additionSkillLevel = parseInt(localStorage.getItem("additionSkillLevel")) || 75;
+let subtractionSkillLevel = parseInt(localStorage.getItem("subtractionSkillLevel")) || 75;
+let multiplicationSkillLevel = parseInt(localStorage.getItem("multiplicationSkillLevel")) || 75;
+let divisionSkillLevel = parseInt(localStorage.getItem("divisionSkillLevel")) || 75;
+// get total answered questions
+let totalAdditionAnswered = parseInt(localStorage.getItem("totalAdditionAnswered")) || 0;
+let totalSubtractionAnswered = parseInt(localStorage.getItem("totalSubtractionAnswered")) || 0;
+let totalMultiplicationAnswered = parseInt(localStorage.getItem("totalMultiplicationAnswered")) || 0;
+let totalDivisionAnswered = parseInt(localStorage.getItem("totalDivisionAnswered")) || 0;
+// get total correct questions
+let totalAdditionCorrect = parseInt(localStorage.getItem("totalAdditionCorrect")) || 0;
+let totalSubtractionCorrect = parseInt(localStorage.getItem("totalSubtractionCorrect")) || 0;
+let totalMultiplicationCorrect = parseInt(localStorage.getItem("totalMultiplicationCorrect")) || 0;
+let totalDivisionCorrect = parseInt(localStorage.getItem("totalDivisionCorrect")) || 0;
+
 /*
     Addition Section
 */
-let additionSkillLevel = parseInt(localStorage.getItem("additionSkillLevel")) || 75;
 let additionAnswerStreak = 0;
 let additionDifficultyRanges = [
     [10,10,'none'], // lowest difficulty is 1 digit plus 1 digit, no upper limit to answer
@@ -18,7 +40,6 @@ let additionDifficultyRanges = [
 /*
     Subtraction Section
 */
-let subtractionSkillLevel = parseInt(localStorage.getItem("subtractionSkillLevel")) || 75;
 let subtractionAnswerStreak = 0;
 let subtractionDifficultyRanges = [
     [10,10,0], // 1 digit minus 1 digit, no negatives
@@ -30,7 +51,6 @@ let subtractionDifficultyRanges = [
     [1000,10000,'none']
 ];
 
-let multiplicationSkillLevel = parseInt(localStorage.getItem("multiplicationSkillLevel")) || 75;
 let multiplicationAnswerStreak = 0;
 let multiplicationDifficultyRanges = [
     [6,6,25], // 5x5, 25 max
@@ -42,7 +62,6 @@ let multiplicationDifficultyRanges = [
     [101,101,'none'] // 100x100, no max
 ]
 
-let divisionSkillLevel = parseInt(localStorage.getItem("divisionSkillLevel")) || 75;
 let divisionAnswerStreak = 0;
 let divisionDifficultyRanges = [
     [26,6,'none'], // 25/5 - bound for numbers means divisor must be above that
@@ -252,47 +271,68 @@ class MathQuestion {
         if (this.operator === '+') {
             if (isCorrect) {
                 additionSkillLevel += this.pointVal;
+                localStorage.setItem("totalAdditionCorrect", ++totalAdditionCorrect);
                 additionAnswerStreak++;
+                if (additionAnswerStreak > longestAdditionAnswerStreak) 
+                    localStorage.setItem("longestAdditionAnswerStreak", additionAnswerStreak.toString());
             }
             else {
                 additionSkillLevel -= this.pointVal;
                 additionAnswerStreak = 0;
             }
             localStorage.setItem("additionSkillLevel", additionSkillLevel.toString());
+            localStorage.setItem("totalAdditionAnswered", ++totalAdditionAnswered);
         }
         else if (this.operator === '-') {
             if (isCorrect) {
                 subtractionSkillLevel += this.pointVal;
+                localStorage.setItem("totalSubtractionCorrect", ++totalSubtractionCorrect);
                 subtractionAnswerStreak++;
+                if (subtractionAnswerStreak > longestSubtractionAnswerStreak) 
+                    localStorage.setItem("longestSubtractionAnswerStreak", subtractionAnswerStreak.toString());
             }
             else {
                 subtractionSkillLevel -= this.pointVal;
                 subtractionAnswerStreak = 0;
             }
             localStorage.setItem("subtractionSkillLevel", subtractionSkillLevel.toString());
+            localStorage.setItem("totalSubtractionAnswered", ++totalSubtractionAnswered);
         }
         else if (this.operator === '*') {
             if (isCorrect) {
                 multiplicationSkillLevel += this.pointVal;
+                localStorage.setItem("totalMultiplicationCorrect", ++totalMultiplicationCorrect);
                 multiplicationAnswerStreak++;
+                if (multiplicationAnswerStreak > longestMultiplicationAnswerStreak)
+                    localStorage.setItem("longestMultiplicationAnswerStreak", multiplicationAnswerStreak.toString());
             }
             else {
                 multiplicationSkillLevel -= this.pointVal;
                 multiplicationAnswerStreak = 0;
             }
             localStorage.setItem("multiplicationSkillLevel", multiplicationSkillLevel.toString());
+            localStorage.setItem("totalMultiplicationAnswered", ++totalMultiplicationAnswered);
         }
         else if (this.operator === '/') {
             if (isCorrect) {
                 divisionSkillLevel += this.pointVal;
+                localStorage.setItem("totalDivisionCorrect", ++totalDivisionCorrect);
                 divisionAnswerStreak++;
+                if (divisionAnswerStreak > longestDivisionAnswerStreak)
+                    localStorage.setItem("longestDivisionAnswerStreak", divisionAnswerStreak.toString());
             }
             else {
                 divisionSkillLevel -= this.pointVal;
                 divisionAnswerStreak = 0;
             }
             localStorage.setItem("divisionSkillLevel", divisionSkillLevel.toString());
+            localStorage.setItem("totalDivisionAnswered", ++totalDivisionAnswered);
         }
+
+        if (isCorrect && (currentOverallStreak > longestOverallAnswerStreak)) 
+            localStorage.setItem("longestOverallAnswerStreak", currentOverallStreak.toString()); // update overall answer streak upon any correct answer
+        else
+            currentOverallStreak = 0;
     }
     
 }

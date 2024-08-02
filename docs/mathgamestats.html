@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Math Game Stats</title>
+  <meta charset="utf-8">
+  <!-- import bootstrap 5.1 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/b33dd8950a.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&display=swap" rel="stylesheet">
+  <link rel="icon" href="appicon.ico">
+  <link rel="stylesheet" href="assets/mstyle.css" type="text/css">
+</head>
+<body class="bg-dark text-light">
+  <div class="jumbotron" style="justify-content: center; text-align: center;">
+  <div class="bg-dark pb-4" id="stickyHeader">
+    <h1 class="pt-4">Math Game Stats</h1>
+    <h3 id="connection-status"></h3>
+    <div class="pt-2">
+      <button class="btn btn-rounded btn-primary mx-1" onclick="location.href='index.html'" title="Home Page"><i class="fa-solid fa-house"></i> Back to Home</button>
+      <button class="btn btn-rounded btn-success mx-1" onclick="location.href='mathgame.html'">Play Math Game</button>
+      <!-- <button class="btn btn-rounded btn-primary mx-1" id="connectButton">Connect to Arduino</button>
+      <button class="btn btn-rounded btn-danger mx-1" onclick="sendData('0000000000000000000000000000000000000000000000000000000000000000')">Clear Display</button> -->
+      <button class="btn btn-rounded btn-primary mx-1" onclick="toggleSticky()" id="stickyButton" title="Pin tools"><i class="fa-solid fa-thumbtack"></i></button>
+      <!-- <button class="btn btn-rounded btn-warning mx-1" id="tts-toggler">TTS Toggler</button> -->
+    </div>
+  </div>
+
+  <script>
+    // get sticky status from local storage on page load
+    if (localStorage.getItem('stickyEnabled') == 'true') {
+      document.getElementById('stickyHeader').classList.add('sticky');
+      document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      document.getElementById('stickyButton').title = 'Unpin tools';
+    }
+
+    function toggleSticky() {
+      const stickyHeader = document.getElementById('stickyHeader');
+      if (stickyHeader.classList.contains('sticky')) {
+        localStorage.setItem('stickyEnabled', 'false');
+        stickyHeader.classList.remove('sticky');
+        document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+        document.getElementById('stickyButton').title = 'Pin tools to top';
+      } else {
+        localStorage.setItem('stickyEnabled', 'true');
+        stickyHeader.classList.add('sticky');
+        document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+      document.getElementById('stickyButton').title = 'Unpin tools';
+      }
+    }
+  </script>
+
+  <div class="p-3 d-flex justify-content-center align-items-center">
+    <table style="align-self: center;">
+        <tr>
+            <th></th>
+            <th>Overall</th>
+            <th>Addition</th>
+            <th>Subtraction</th>
+            <th>Multiplication</th>
+            <th>Division</th>
+        </tr>
+        <tr>
+            <th>Rank (rating)</th>
+            <td id="rank-total"></td>
+            <td id="rank-add"></td>
+            <td id="rank-sub"></td>
+            <td id="rank-mult"></td>
+            <td id="rank-div"></td>
+        </tr>
+        <tr>
+            <th>Accuracy (Won/Played)</th>
+            <td id="acc-total"></td>
+            <td id="acc-add"></td>
+            <td id="acc-sub"></td>
+            <td id="acc-mult"></td>
+            <td id="acc-div"></td>
+        </tr>
+        <tr>
+            <th>Highest Streak</th>
+            <td id="streak-total"></td>
+            <td id="streak-add"></td>
+            <td id="streak-sub"></td>
+            <td id="streak-mult"></td>
+            <td id="streak-div"></td>
+        </tr>
+    </table>
+  </div>
+
+    <style>
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            color: #61caff;
+        }
+        50% {
+            transform: scale(1.16);
+            color: white;
+        }
+        100% {
+            transform: scale(1);
+            color: #61caff;
+        }
+    }
+    </style>
+
+    <script>
+
+        function getRankInfo(value) {
+            if (value <= 50)
+                return ["Bronze", "#945d35"];
+            else if (value <= 100)
+                return ["Silver", "#bfbfbf"];
+            else if (value <= 150)
+                return ["Gold", "#f7bd1b"];
+            else if (value <= 200)
+                return ["Platinum", "#b0e0e8"];
+            else if (value <= 250)
+                return ["Emerald", "#4b8a3e"];
+            else if (value <= 300)
+                return ["Ruby", "#ad2724"];
+            else
+                return ["Diamond", "#61caff"];
+        }
+
+        // updates the element with rank information for the specific colunm
+        function rankUpdater(element, value) {
+            let rankInfo = getRankInfo(value);
+            element.innerHTML = "" + rankInfo[0] + " (" + value + ")";
+            element.style.color = rankInfo[1];
+            if (value > 300) {
+                element.style.animation = "pulse 2.5s infinite";
+            }
+        }
+
+        // updates the element with the accuracy information for the specific column
+        function accuracyUpdater(element, total, correct) {
+            if (total == 0) {
+                element.innerHTML = "N/A (0/0)";
+                return;
+            }
+            let accuracy = Math.round((correct / total) * 100);
+            element.innerHTML = "" + accuracy + "% (" + correct + "/" + total + ")";
+        }
+
+        // updates with streak infromation for the specific column
+        function streakUpdater(element, value) {
+            element.innerHTML = "" + value;
+        }
+
+        // retrieve all local variables
+        // answer streaks and get the longest one
+        let longestAdditionAnswerStreak = parseInt(localStorage.getItem("longestAdditionAnswerStreak")) || 0;
+        let longestSubtractionAnswerStreak = parseInt(localStorage.getItem("longestSubtractionAnswerStreak")) || 0;
+        let longestMultiplicationAnswerStreak = parseInt(localStorage.getItem("longestMultiplicationAnswerStreak")) || 0;
+        let longestDivisionAnswerStreak = parseInt(localStorage.getItem("longestDivisionAnswerStreak")) || 0;
+        let overallLongestStreak = parseInt(localStorage.getItem("overallLongestStreak")) || 0;
+        // default skill level for unknown questions is 75
+        let additionSkillLevel = parseInt(localStorage.getItem("additionSkillLevel")) || 75;
+        let subtractionSkillLevel = parseInt(localStorage.getItem("subtractionSkillLevel")) || 151;
+        let multiplicationSkillLevel = parseInt(localStorage.getItem("multiplicationSkillLevel")) || 75;
+        let divisionSkillLevel = parseInt(localStorage.getItem("divisionSkillLevel")) || 75;
+        let overallSkillLevel = Math.ceil((additionSkillLevel + subtractionSkillLevel + divisionSkillLevel + multiplicationSkillLevel) / 4);
+        // get total answered questions
+        let totalAdditionAnswered = parseInt(localStorage.getItem("totalAdditionAnswered")) || 0;
+        let totalSubtractionAnswered = parseInt(localStorage.getItem("totalSubtractionAnswered")) || 0;
+        let totalMultiplicationAnswered = parseInt(localStorage.getItem("totalMultiplicationAnswered")) || 0;
+        let totalDivisionAnswered = parseInt(localStorage.getItem("totalDivisionAnswered")) || 0;
+        let totalAnswered = totalAdditionAnswered + totalSubtractionAnswered + totalMultiplicationAnswered + totalDivisionAnswered;
+        // get total correct questions
+        let totalAdditionCorrect = parseInt(localStorage.getItem("totalAdditionCorrect")) || 0;
+        let totalSubtractionCorrect = parseInt(localStorage.getItem("totalSubtractionCorrect")) || 0;
+        let totalMultiplicationCorrect = parseInt(localStorage.getItem("totalMultiplicationCorrect")) || 0;
+        let totalDivisionCorrect = parseInt(localStorage.getItem("totalDivisionCorrect")) || 0;
+        let totalCorrect = totalAdditionCorrect + totalSubtractionCorrect + totalMultiplicationCorrect + totalDivisionCorrect;
+
+        // generate rating text
+        rankUpdater(document.querySelector("#rank-add"), additionSkillLevel);
+        rankUpdater(document.querySelector("#rank-sub"), subtractionSkillLevel);
+        rankUpdater(document.querySelector("#rank-mult"), multiplicationSkillLevel);
+        rankUpdater(document.querySelector("#rank-div"), divisionSkillLevel);
+        rankUpdater(document.querySelector("#rank-total"), overallSkillLevel);
+
+        // generate accuracy text
+        accuracyUpdater(document.querySelector("#acc-add"), totalAdditionAnswered, totalAdditionCorrect);
+        accuracyUpdater(document.querySelector("#acc-sub"), totalSubtractionAnswered, totalSubtractionCorrect);
+        accuracyUpdater(document.querySelector("#acc-mult"), totalMultiplicationAnswered, totalMultiplicationCorrect);
+        accuracyUpdater(document.querySelector("#acc-div"), totalDivisionAnswered, totalDivisionCorrect);
+        accuracyUpdater(document.querySelector("#acc-total"), totalAnswered, totalCorrect);
+
+        // generate streak text
+        streakUpdater(document.querySelector("#streak-add"), longestAdditionAnswerStreak);
+        streakUpdater(document.querySelector("#streak-sub"), longestSubtractionAnswerStreak);
+        streakUpdater(document.querySelector("#streak-mult"), longestMultiplicationAnswerStreak);
+        streakUpdater(document.querySelector("#streak-div"), longestDivisionAnswerStreak);
+        streakUpdater(document.querySelector("#streak-total"), overallLongestStreak);
+
+
+
+
+
+    </script>
+
+  </div>
+</body>
