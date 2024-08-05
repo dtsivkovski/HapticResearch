@@ -5,6 +5,7 @@
     top: 0;
     z-index: 1000;
     border-bottom: 1px solid #000;
+    background-color: #212121;
   }
 
   .btn {
