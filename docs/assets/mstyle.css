@@ -20,6 +20,7 @@
   }
   body {
     font-family: 'Assistant', sans-serif;
+    background-color: #212121;
   }
   .btn-overridehover:hover {
     transform: translate(0,0) !important;
