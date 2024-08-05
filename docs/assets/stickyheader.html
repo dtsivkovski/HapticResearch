@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- NOT USED ANYWHERE, JUST SAVED IF NECESSARY LATER -->
+<html>
+
+    <button class="btn btn-rounded btn-primary mx-1" onclick="toggleSticky()" id="stickyButton" title="Pin tools"><i class="fa-solid fa-thumbtack"></i></button>
+
+    <script>
+        // get sticky status from local storage on page load
+        if (localStorage.getItem('stickyEnabled') == 'true') {
+          document.getElementById('stickyHeader').classList.add('sticky');
+          document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+          document.getElementById('stickyButton').title = 'Unpin from top';
+        }
+    
+        function toggleSticky() {
+          const stickyHeader = document.getElementById('stickyHeader');
+          if (stickyHeader.classList.contains('sticky')) {
+            localStorage.setItem('stickyEnabled', 'false');
+            stickyHeader.classList.remove('sticky');
+            document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
+            document.getElementById('stickyButton').title = 'Pin to top';
+          } else {
+            localStorage.setItem('stickyEnabled', 'true');
+            stickyHeader.classList.add('sticky');
+            document.getElementById('stickyButton').innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            document.getElementById('stickyButton').title = 'Unpin from top';
+          }
+        }
+      </script>
+</html>
