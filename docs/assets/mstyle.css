@@ -36,3 +36,14 @@
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
   }
+
+table tr th {
+  border: 1px rgb(115, 115, 115) solid;
+  padding: 0.5em;
+  font-size: 1.25em;
+}
+
+table tr td {
+  border: 1px rgb(115, 115, 115) solid;
+  padding: 0.5em;
+}
