@@ -383,14 +383,15 @@
       }
 
       // encodes the data being sent to the arduino port
+      const finalData = "~" + data;
       const encoder = new TextEncoder();
-      const dataArray = encoder.encode(data);
+      const dataArray = encoder.encode(finalData);
 
       // writing to the serial port of the arduino
       const writer = serialPort.writable.getWriter();
       await writer.write(dataArray);
       writer.releaseLock();
-      console.log('Data sent to Arduino:', data);
+      console.log('Data sent to Arduino:', finalData);
     }
 
     // connection for the arduino

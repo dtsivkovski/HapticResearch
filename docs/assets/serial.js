@@ -34,14 +34,15 @@ async function sendData(data) {
     }
 
     // encodes the data being sent to the arduino port
+    const finalData = "~" + data; // indicates it is grid data
     const encoder = new TextEncoder();
-    const dataArray = encoder.encode(data);
+    const dataArray = encoder.encode(finalData);
 
     // writing to the serial port of the arduino
     const writer = serialPort.writable.getWriter();
     await writer.write(dataArray);
     writer.releaseLock();
-    console.log('Data sent to Arduino:', data);
+    console.log('Data sent to Arduino:', finalData);
 
     // TODO: Add event listener to listen for buttons, implement physical buttons
 }
