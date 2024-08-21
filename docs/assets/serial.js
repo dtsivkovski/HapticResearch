@@ -19,7 +19,7 @@ connectButton.addEventListener('click', async () => {
         // delay 2s
         setTimeout(() => {
             sendData("1111111110000001100000011000010110101001100100011000000111111111"); // symbol to show connection success
-        }, 2000);
+        }, 1100);
     } catch (error) {
         console.error('Error connecting to serial port:', error);
         alert('Error connecting to serial port. Please try again.');
