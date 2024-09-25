@@ -191,6 +191,10 @@ void checkString(String data) {
     }
 
     // play values
+    Serial.print("&");
+    Serial.print(i);
+    Serial.print(j);
+    Serial.println("");
     TD.TCA_and_PORT(i,j);
     TD.LOAD_WAVE(WaveForm_For_Display, sizeof(WaveForm_For_Display));
     TD.TCA_and_PORT(i,j);
